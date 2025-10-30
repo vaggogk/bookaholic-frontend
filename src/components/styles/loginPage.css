@@ -1,0 +1,65 @@
+/* src/index.css */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 2px solid #7E4C27;
+    border-radius: 8px;
+    background: #fdfbfb;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group p {
+    color:#7E4C27;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: Arial;
+}
+
+.form-group label {
+    color:#7E4C27;
+    font-family: Arial;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    color: #7E4C27;
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #7E4C27;
+    outline: none;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}
+
+.form-group-icon {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #7E4C27;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-btn:hover {
+    background-color: #7E4C27;
+}
+

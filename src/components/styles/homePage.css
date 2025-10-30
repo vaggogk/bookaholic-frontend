@@ -1,0 +1,31 @@
+.home-page-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #a379b3;
+    border-radius: 8px;
+    background: #fdfbfb;
+}
+
+.home-form-group-icon {
+
+}
+
+.home-form-group p {
+
+
+}
+
+.home-login-btn {
+    width: 100%;
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.home-login-btn:hover {
+    background-color: #7b518c;
+}
