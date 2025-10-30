@@ -35,7 +35,7 @@ const LibraryPage = () => {
             }
         };
 
-        fetchBooks();
+         fetchBooks();
     }, []);
 
     if (loading) {
