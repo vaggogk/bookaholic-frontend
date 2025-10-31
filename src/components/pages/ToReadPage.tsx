@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import '../styles/homePage.css'
 import {Link} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faRightLeft} from "@fortawesome/free-solid-svg-icons";
+import {faPenToSquare, faRightLeft, faTrash} from "@fortawesome/free-solid-svg-icons";
 
 // Ορισμός interface για τα βιβλία
 interface Book {
@@ -23,11 +23,28 @@ const ToReadPage = () => {
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const handleDelete = async (bookId:number) => {
+        if(window.confirm('Are you sure?')) {
+            try {
+                await fetch(`http://localhost:8080/api/books/${bookId}`, {
+                    method: 'DELETE'
+                });
+                setBooks(books.filter(book => book.id !== bookId));
+            } catch (error) {
+                console.error('Backend delete failed, using frontend delete:', error);
+            } finally {
+                setBooks(books.filter(book => book.id !== bookId))
+            }
+        }
+    }
+
     const filteredBooks = books.filter(book =>
         book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.publisher.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+
 
 
 
@@ -137,13 +154,31 @@ const ToReadPage = () => {
                                     )}
 
                                     {/* 2 ΚΟΥΜΠΙΑ */}
-                                    <div className="pt-3 flex gap-6 justify-center mt-4">
-                                        <button className="px-3 py-1 border-2  border-green-700 text-green-700 hover:bg-green-50 rounded text-md font-medium">
-                                            edit
-                                        </button>
-                                        <button className="px-3 py-1 border-2 border-red-700 text-red-700 hover:bg-red-50 rounded text-md font-medium">
-                                            delete
-                                        </button>
+                                    <div className="mt-4">
+                                        <div className="flex gap-6 justify-center items-center">
+                                            {/* Edit Button */}
+                                            <Link to="/edit" className="relative group">
+                                                <FontAwesomeIcon
+                                                    icon={faPenToSquare}
+                                                    className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
+                                                />
+                                                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
+                                                    Edit
+                                                </span>
+                                            </Link>
+
+                                            {/* Delete Button */}
+                                            <div className="relative group">
+                                                <FontAwesomeIcon
+                                                    icon={faTrash}
+                                                    className="text-red-800 text-2xl cursor-pointer hover:text-amber-900 transition"
+                                                    onClick={() => handleDelete(book.id)}
+                                                />
+                                                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
+                                                    Delete
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             ))

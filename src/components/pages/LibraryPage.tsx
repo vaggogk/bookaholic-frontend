@@ -28,6 +28,20 @@ const LibraryPage = () => {
         book.publisher.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const handleDelete = async (bookId: number) => {
+        if(window.confirm('Are you sure you want to delete this book?')){
+            try {
+                await fetch(`http://localhost:8080/api/books/${bookId}`, {
+                    method: 'DELETE'
+                });
+            } catch (error) {
+                console.error('Backend delete failed, using frontend delete:', error);
+            } finally {
+                setBooks(books.filter(book => book.id !== bookId))
+            }
+        }
+    }
+
     useEffect(() => {
         // MOCK DATA
         const mockBooks: Book[] = [
@@ -182,6 +196,7 @@ const LibraryPage = () => {
                                                 <FontAwesomeIcon
                                                     icon={faTrash}
                                                     className="text-red-800 text-2xl cursor-pointer hover:text-amber-900 transition"
+                                                    onClick={() => handleDelete(book.id)}
                                                 />
                                                 <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
                                                     Delete
