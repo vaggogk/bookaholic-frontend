@@ -108,6 +108,16 @@ const FinishedPage = () => {
                                     {book.notes && (
                                         <p className="text-amber-600 mt-2"><span className="font-semibold">Notes:</span> {book.notes}</p>
                                     )}
+
+                                    {/* 2 ΚΟΥΜΠΙΑ */}
+                                    <div className="pt-3 flex gap-6 justify-center mt-4">
+                                        <button className="px-3 py-1 border-2  border-green-700 text-green-700 hover:bg-green-50 rounded text-md font-medium">
+                                            edit
+                                        </button>
+                                        <button className="px-3 py-1 border-2 border-red-700 text-red-700 hover:bg-red-50 rounded text-md font-medium">
+                                            delete
+                                        </button>
+                                    </div>
                                 </div>
                             ))
                         )}
