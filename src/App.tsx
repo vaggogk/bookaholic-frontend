@@ -8,6 +8,7 @@ import LibraryPage from "./components/pages/LibraryPage.tsx";
 import CurrentlyReadingPage from "./components/pages/CurrentlyReadingPage.tsx";
 import ToReadPage from "./components/pages/ToReadPage.tsx";
 import FinishedPage from "./components/pages/FinishedPage.tsx";
+import EditPage from "./components/pages/EditPage.tsx";
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path="to-read" element={<ToReadPage />}/>
                 <Route path="finished" element={<FinishedPage />}/>
                 <Route path="go-back" element={<HomePage />}/>
+                <Route path="edit" element={<EditPage />}/>
                 {/*<Route path="home-page" element={<HomePage />}/>*/}
             </Routes>
         </BrowserRouter>
