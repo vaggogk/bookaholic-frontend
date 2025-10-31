@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -7,8 +8,9 @@ const RegisterPage = () => {
         password: '',
         confirmPassword: ''
     });
-    const [backendErrors, setBackendErrors] = useState<string[]>([]); // ← πρόσθεσε τύπο
+    const [backendErrors, setBackendErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const  navigate = useNavigate();
 
     // Ορισμός τύπου για το change event
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +59,7 @@ const RegisterPage = () => {
                 setBackendErrors(result.errors || ['Registration failed - please try again']);
             } else {
                 alert('Registration successful! Please login.');
-                window.location.href = '/login';
+               navigate("/login");
             }
         } catch (error) {
             console.error('Fetch error:', error);
