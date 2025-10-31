@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import '../styles/homePage.css'
 import {Link} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faRightLeft} from "@fortawesome/free-solid-svg-icons";
+import {faPenToSquare, faRightLeft, faTrash} from "@fortawesome/free-solid-svg-icons";
 
 interface Book {
     id: number;
+    imageUrl?: string;
     title: string;
     author: string;
     publisher: string;
@@ -32,7 +33,8 @@ const LibraryPage = () => {
                 cost: 12.99,
                 readingStatus: "finished",
                 reviewRating: 4.5,
-                notes: "Classic novel about the American Dream"
+                notes: "Classic novel about the American Dream",
+                imageUrl: ""
             },
             {
                 id: 2,
@@ -127,11 +129,21 @@ const LibraryPage = () => {
                         ) : (
                             books.map(book => (
                                 <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border border-amber-200">
+                                    {book.imageUrl && (
+                                        <div className="mb-4 flex justify-center">
+                                            <img
+                                                src={book.imageUrl}
+                                                alt={`Cover of ${book.title}`}
+                                                className="w-32 h-48 object-cover rounded-lg shadow-md"
+                                            />
+                                        </div>
+                                    )}
+
                                     <h3 className="text-lg font-bold text-amber-800 mb-2">{book.title}</h3>
                                     <p className="text-amber-600"><span className="font-semibold">Author:</span> {book.author}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Publisher:</span> {book.publisher}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Pages:</span> {book.pages}</p>
-                                    <p className="text-amber-600"><span className="font-semibold">Cost:</span> €{book.cost}</p>
+                                    <p className="text-amber-600"><span className="font-semibold">Cost:</span> {book.cost}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Status:</span>
                                         <span className={`ml-1 ${
                                             book.readingStatus === 'finished' ? 'text-green-800' :
@@ -150,13 +162,30 @@ const LibraryPage = () => {
                                     )}
 
                                     {/* 2 ΚΟΥΜΠΙΑ */}
-                                    <div className="pt-3 flex gap-6 justify-center mt-4">
-                                        <button className="px-3 py-1 border-2  border-green-700 text-green-700 hover:bg-green-50 rounded text-md font-medium">
-                                            edit
-                                        </button>
-                                        <button className="px-3 py-1 border-2 border-red-700 text-red-700 hover:bg-red-50 rounded text-md font-medium">
-                                            delete
-                                        </button>
+                                    <div className=" mt-4">
+                                        <div className="flex gap-6 justify-center items-center ">
+                                            {/* Edit Button */}
+                                            <Link to="/edit" className="relative group">
+                                                <FontAwesomeIcon
+                                                    icon={faPenToSquare}
+                                                    className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
+                                                />
+                                                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
+                                                     Edit
+                                                </span>
+                                            </Link>
+
+                                            {/* Delete Button */}
+                                            <div className="relative group">
+                                                <FontAwesomeIcon
+                                                    icon={faTrash}
+                                                    className="text-red-800 text-2xl cursor-pointer hover:text-amber-900 transition"
+                                                />
+                                                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
+                                                 Delete
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             ))

@@ -7,6 +7,7 @@ import {faRightLeft} from "@fortawesome/free-solid-svg-icons";
 // Ορισμός interface για τα βιβλία
 interface Book {
     id: number;
+    imageUrl?: string;
     title: string;
     author: string;
     publisher: string;
@@ -91,6 +92,16 @@ const ToReadPage = () => {
                         ) : (
                             books.map(book => (
                                 <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border border-amber-200">
+                                    {book.imageUrl && (
+                                        <div className="mb-4 flex justify-center">
+                                            <img
+                                                src={book.imageUrl}
+                                                alt={`Cover of ${book.title}`}
+                                                className="w-32 h-48 object-cover rounded-lg shadow-md"
+                                            />
+                                        </div>
+                                    )}
+
                                     <h3 className="text-lg font-bold text-amber-800 mb-2">{book.title}</h3>
                                     <p className="text-amber-600"><span className="font-semibold">Author:</span> {book.author}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Publisher:</span> {book.publisher}</p>

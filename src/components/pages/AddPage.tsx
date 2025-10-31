@@ -12,7 +12,7 @@ const AddPage = () => {
 
         const formData = new FormData(e.currentTarget as HTMLFormElement);
         const bookData = {
-            coverImage: imagePreview,
+            imageUrl: imagePreview,
             title: formData.get('title') as string,
             author: formData.get('author') as string,
             publisher: formData.get('publisher') as string,

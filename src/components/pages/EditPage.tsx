@@ -10,7 +10,7 @@ const EditPage = () => {
         <div className="min-h-screen flex flex-col">
 
             {/* Return option */}
-            <div className="absolute left-4 top-1/3 -translate-y-1/2">
+            <div className="absolute left-4 top-1/4 -translate-y-1/2">
                 <Link to="/go-back">
                     <div className="relative group">
                         <FontAwesomeIcon icon={faRightLeft}
