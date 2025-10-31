@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import '../styles/homePage.css'
+import {Link} from "react-router";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faRightLeft} from "@fortawesome/free-solid-svg-icons";
 
 
 // Ορισμός interface για τα βιβλία
@@ -38,12 +41,27 @@ const FinishedPage = () => {
         fetchBooks();
     }, []);
 
-    if (loading) {
-        return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
-    }
+    // if (loading) {
+    //     return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    // }
 
     return (
         <div className="min-h-screen flex flex-col">
+
+            {/* Return option */}
+            <div className="absolute left-4 top-1/3 -translate-y-1/2">
+                <Link to="/go-back">
+                    <div className="relative group">
+                        <FontAwesomeIcon icon={faRightLeft}
+                                         className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
+                        />
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
+                                                Return back
+                                            </span>
+                    </div>
+                </Link>
+            </div>
+
             {/* Header */}
             <div className="h-64 relative overflow-hidden flex-shrink-0">
                 <img

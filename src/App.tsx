@@ -22,6 +22,7 @@ function App() {
                 <Route path="currently-reading" element={<CurrentlyReadingPage />}/>
                 <Route path="to-read" element={<ToReadPage />}/>
                 <Route path="finished" element={<FinishedPage />}/>
+                <Route path="go-back" element={<HomePage />}/>
                 {/*<Route path="home-page" element={<HomePage />}/>*/}
             </Routes>
         </BrowserRouter>
