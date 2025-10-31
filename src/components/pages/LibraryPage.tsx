@@ -18,8 +18,15 @@ interface Book {
 }
 
 const LibraryPage = () => {
+    const [searchTerm, setSearchTerm] = useState('');
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const filteredBooks = books.filter(book =>
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.publisher.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     useEffect(() => {
         // MOCK DATA
@@ -62,21 +69,6 @@ const LibraryPage = () => {
 
         setBooks(mockBooks);
         setLoading(false);
-
-        /*
-        //
-        try {
-            const response = await fetch('http://localhost:8080/api/books');
-            if (response.ok) {
-                const booksData = await response.json();
-                setBooks(booksData);
-            }
-        } catch (error) {
-            console.error('Error fetching books:', error);
-        } finally {
-            setLoading(false);
-        }
-        */
     }, []);
 
     if (loading) {
@@ -102,8 +94,8 @@ const LibraryPage = () => {
                                          className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
                         />
                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
-                                                Return back
-                                            </span>
+                            Return back
+                        </span>
                     </div>
                 </Link>
             </div>
@@ -115,19 +107,29 @@ const LibraryPage = () => {
                         <h1 className="text-4xl font-bold text-amber-800 flex items-center justify-center px-4 relative">
                             <span className="text-center">Library</span>
                         </h1>
+
+                        {/* SEARCH BAR -  */}
+                        <div className="max-w-md mx-auto mt-6">
+                            <input
+                                type="text"
+                                placeholder="🔍 Search by title, author or publisher..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full px-4 py-3 border border-amber-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-lg"
+                            />
+                        </div>
                     </div>
 
                     {/* Βιβλία */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {books.length === 0 ? (
+                        {filteredBooks.length === 0 ? (
                             <div className="col-span-full text-center py-8">
-                                <p className="text-amber-600 text-lg">No books in your library yet.</p>
-                                <a href="/add-book" className="text-amber-700 underline mt-2 inline-block">
-                                    Add your first book!
-                                </a>
+                                <p className="text-amber-800 text-lg">
+                                    {searchTerm ? `No books found for "${searchTerm}"` : "No books in your library yet."}
+                                </p>
                             </div>
                         ) : (
-                            books.map(book => (
+                            filteredBooks.map(book => (
                                 <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border border-amber-200">
                                     {book.imageUrl && (
                                         <div className="mb-4 flex justify-center">
@@ -143,7 +145,7 @@ const LibraryPage = () => {
                                     <p className="text-amber-600"><span className="font-semibold">Author:</span> {book.author}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Publisher:</span> {book.publisher}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Pages:</span> {book.pages}</p>
-                                    <p className="text-amber-600"><span className="font-semibold">Cost:</span> {book.cost}</p>
+                                    <p className="text-amber-600"><span className="font-semibold">Cost:</span> €{book.cost}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Status:</span>
                                         <span className={`ml-1 ${
                                             book.readingStatus === 'finished' ? 'text-green-800' :
@@ -162,8 +164,8 @@ const LibraryPage = () => {
                                     )}
 
                                     {/* 2 ΚΟΥΜΠΙΑ */}
-                                    <div className=" mt-4">
-                                        <div className="flex gap-6 justify-center items-center ">
+                                    <div className="mt-4">
+                                        <div className="flex gap-6 justify-center items-center">
                                             {/* Edit Button */}
                                             <Link to="/edit" className="relative group">
                                                 <FontAwesomeIcon
@@ -171,7 +173,7 @@ const LibraryPage = () => {
                                                     className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
                                                 />
                                                 <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
-                                                     Edit
+                                                    Edit
                                                 </span>
                                             </Link>
 
@@ -182,7 +184,7 @@ const LibraryPage = () => {
                                                     className="text-red-800 text-2xl cursor-pointer hover:text-amber-900 transition"
                                                 />
                                                 <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
-                                                 Delete
+                                                    Delete
                                                 </span>
                                             </div>
                                         </div>

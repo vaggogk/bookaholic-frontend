@@ -19,8 +19,16 @@ interface Book {
 }
 
 const ToReadPage = () => {
+    const [searchTerm, setSearchTerm] = useState('');
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const filteredBooks = books.filter(book =>
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.publisher.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
 
 
     useEffect(() => {
@@ -78,19 +86,28 @@ const ToReadPage = () => {
                         <h1 className="text-4xl font-bold text-amber-800 flex items-center justify-center px-4 relative">
                             <span className="text-center">To Read</span>
                         </h1>
+
+                        {/* SEARCH BAR  */}
+                        <div className="max-w-md mx-auto mt-6">
+                            <input
+                                type="text"
+                                placeholder="🔍 Search by title, author or publisher..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full px-4 py-3 border border-amber-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-lg"
+                            />
+                        </div>
+
                     </div>
 
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {books.length === 0 ? (
+                        {filteredBooks.length === 0 ? (
                             <div className="col-span-full text-center py-8">
                                 <p className="text-amber-600 text-lg">No books in your To Read list yet.</p>
-                                <a href="/add-book" className="text-amber-700 underline mt-2 inline-block">
-                                    Add your first book!
-                                </a>
                             </div>
                         ) : (
-                            books.map(book => (
+                            filteredBooks.map(book => (
                                 <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border border-amber-200">
                                     {book.imageUrl && (
                                         <div className="mb-4 flex justify-center">
@@ -112,7 +129,7 @@ const ToReadPage = () => {
                                             {book.readingStatus}
                                         </span>
                                     </p>
-                                    {book.reviewRating && (
+                                    {book.reviewRating !== undefined && book.reviewRating !== null && (
                                         <p className="text-amber-600"><span className="font-semibold">Rating:</span> ⭐{book.reviewRating}/5</p>
                                     )}
                                     {book.notes && (
