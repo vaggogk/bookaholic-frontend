@@ -62,7 +62,7 @@ const FinishedPage = () => {
                         </h1>
                     </div>
 
-                    {/* Βιβλία με status 'finished' */}
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {books.length === 0 ? (
                             <div className="col-span-full text-center py-8">
@@ -80,7 +80,7 @@ const FinishedPage = () => {
                                     <p className="text-amber-600"><span className="font-semibold">Pages:</span> {book.pages}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Cost:</span> €{book.cost}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Status:</span>
-                                        <span className="ml-1 text-green-600 font-semibold">  {/* ← ΔΙΟΡΘΩΣΗ 4: Πράσινο χρώμα */}
+                                        <span className="ml-1 text-green-600 font-semibold">
                                             {book.readingStatus}
                                         </span>
                                     </p>

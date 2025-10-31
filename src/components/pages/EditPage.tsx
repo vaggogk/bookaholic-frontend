@@ -93,7 +93,7 @@ const EditPage = () => {
                         />
                     </div>
 
-                    {/* Grid for Pages & Cost */}
+
                     <div className="grid grid-cols-2 gap-4">
                         {/* Total Pages */}
                         <div className="space-y-2">
@@ -172,7 +172,7 @@ const EditPage = () => {
                         <textarea
                             className="w-full p-3 border-2 border-amber-700 rounded-lg focus:border-amber-800 focus:ring-2 focus:ring-amber-700 transition-colors text-amber-900 placeholder-amber-800 resize-none"
                             id="notes"
-                            rows="3"
+                            rows={3}
                             placeholder="Add your notes about the book..."
                         ></textarea>
                     </div>

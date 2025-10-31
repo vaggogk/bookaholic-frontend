@@ -18,7 +18,7 @@ const ToReadPage = () => {
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // FETCH books με status = 'to_read'
+
     useEffect(() => {
         const fetchBooks = async () => {
             try {
@@ -61,7 +61,7 @@ const ToReadPage = () => {
                         </h1>
                     </div>
 
-                    {/* Βιβλία με status 'to_read' */}
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {books.length === 0 ? (
                             <div className="col-span-full text-center py-8">

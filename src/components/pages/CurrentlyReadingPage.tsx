@@ -15,10 +15,10 @@ interface Book {
 }
 
 const CurrentlyReadingPage = () => {
-    const [books, setBooks] = useState<Book[]>([]);  // ← Πρόσθεσε <Book[]> εδώ
+    const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // FETCH books με status = 'currently_reading'
+
     useEffect(() => {
         const fetchBooks = async () => {
             try {
@@ -61,7 +61,7 @@ const CurrentlyReadingPage = () => {
                         </h1>
                     </div>
 
-                    {/* Βιβλία με status 'currently_reading' */}
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {books.length === 0 ? (
                             <div className="col-span-full text-center py-8">

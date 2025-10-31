@@ -3,7 +3,7 @@ import {useNavigate} from "react-router";
 
 const AddPage = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const navigate = useNavigate(); // Πρόσθεσε αυτό
+    const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
