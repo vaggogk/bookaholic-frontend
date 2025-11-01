@@ -30,7 +30,7 @@ const HomePage = () => {
 
                                 {/* Add book - */}
                                 <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                                    <Link to="/add-book">
+                                    <Link to="/add_book">
                                         <div className="relative group">
                                             <FontAwesomeIcon
                                                 icon={faCirclePlus}
@@ -45,7 +45,7 @@ const HomePage = () => {
 
                                 {/* Logout */}
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                    <Link to="/log-out">
+                                    <Link to="/log_out">
                                     <div className="relative group">
                                         <FontAwesomeIcon
                                             icon={faRightFromBracket}
@@ -71,7 +71,7 @@ const HomePage = () => {
                                 </div>
                             </Link>
 
-                            <Link to="/currently-reading" className="flex-1">
+                            <Link to="/currently_reading" className="flex-1">
                                 <div className="bg-gradient-to-br from-amber-800 to-green-100 border-2 border-none rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 cursor-pointer hover:scale-105 hover:border-none min-w-0 h-full">
                                     <div className="font-bold text-amber-50 w-full h-full py-27 flex items-center justify-center text-lg">
                                         <span className="text-3xl mb-2">📖 </span>
@@ -80,7 +80,7 @@ const HomePage = () => {
                                 </div>
                             </Link>
 
-                            <Link to="/to-read" className="flex-1">
+                            <Link to="/to_read" className="flex-1">
                                 <div className="bg-gradient-to-br from-green-100 to-amber-800 border-2 border-none rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 cursor-pointer hover:scale-105 hover:border-none min-w-0 h-full">
                                     <div className="font-bold text-white w-full h-full py-27 flex items-center justify-center text-lg">
                                         📋 To Read

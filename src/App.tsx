@@ -14,18 +14,20 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
+
+                <Route index element={<LoginPage />}/>
                 <Route path="login" element={<LoginPage />}/>
-                <Route index element={<HomePage />}/>
-                <Route path="add-book" element={<AddPage />}/>
-                <Route path="log-out" element={<LoginPage/>}/>
-                <Route path="Resign-page" element={<RegisterPage/>}/>
+                {/*<Route index element={<HomePage />}/>*/}
+                <Route path="add_book" element={<AddPage />}/>
+                <Route path="log_out" element={<LoginPage/>}/>
+                <Route path="register_page" element={<RegisterPage/>}/>
                 <Route path="library" element={<LibraryPage />}/>
-                <Route path="currently-reading" element={<CurrentlyReadingPage />}/>
-                <Route path="to-read" element={<ToReadPage />}/>
+                <Route path="currently_reading" element={<CurrentlyReadingPage />}/>
+                <Route path="to_read" element={<ToReadPage />}/>
                 <Route path="finished" element={<FinishedPage />}/>
-                <Route path="go-back" element={<HomePage />}/>
+                {/*<Route path="go-back" element={<HomePage />}/>*/}
                 <Route path="edit" element={<EditPage />}/>
-                {/*<Route path="home-page" element={<HomePage />}/>*/}
+                <Route path="home_page" element={<HomePage />}/>
             </Routes>
         </BrowserRouter>
     )

@@ -76,7 +76,7 @@ const FinishedPage = () => {
         <div className="min-h-screen flex flex-col">
             {/* Return option */}
             <div className="absolute left-4 top-1/3 -translate-y-1/2">
-                <Link to="/go-back">
+                <Link to="/home_page">
                     <div className="relative group">
                         <FontAwesomeIcon icon={faRightLeft}
                                          className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"

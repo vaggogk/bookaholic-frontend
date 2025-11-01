@@ -2,7 +2,7 @@
 .login-container {
     max-width: 400px;
     margin: 50px auto;
-    padding: 20px;
+    padding: 35px;
     border: 2px solid #7E4C27;
     border-radius: 8px;
     background: #fdfbfb;
@@ -10,11 +10,12 @@
 
 .form-group {
     margin-bottom: 15px;
+
 }
 .form-group p {
     color:#7E4C27;
     cursor: pointer;
-    text-decoration: underline;
+    text-decoration: none;
     font-family: Arial;
 }
 
@@ -22,7 +23,7 @@
     color:#7E4C27;
     font-family: Arial;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     font-weight: bold;
 }
 
@@ -60,6 +61,6 @@
 }
 
 .login-btn:hover {
-    background-color: #7E4C27;
+    background-color: #915325;
 }
 
