@@ -22,6 +22,13 @@ const CurrentlyReadingPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
+    const[bookCount, setBookCount] = useState(0);
+
+    useEffect(() => {
+        fetch('http://localhost:8080/api/books/count')
+            .then(res => res.json())
+            .then(count => setBookCount(count));
+    }, []);
 
     // delete function
     const handleDelete = async (bookId:number) => {
@@ -100,6 +107,9 @@ const CurrentlyReadingPage = () => {
                         <h1 className="text-4xl font-bold text-amber-800 flex items-center justify-center px-4 relative">
                             <span className="text-center">Currently Reading</span>
                         </h1>
+                        <h1 className="text-2xl font-bold text-amber-600 flex items-center justify-center px-4 relative">
+                            <span className="text-center p-1">Books: {bookCount}</span>
+                        </h1>
 
                         <div className="max-w-md mx-auto mt-6">
                             <input
@@ -114,14 +124,14 @@ const CurrentlyReadingPage = () => {
                     </div>
 
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
                         {filteredBooks.length === 0 ? (
                             <div className="col-span-full text-center py-8">
-                                <p className="text-amber-600 text-lg">No books in your currently reading list yet.</p>
+                                <p className="text-amber-800 text-lg">No books in your currently reading list yet.</p>
                             </div>
                         ) : (
                             filteredBooks.map(book => (
-                                <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border border-amber-200">
+                                <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border-3 border-amber-100">
                                     {book.imageUrl && (
                                         <div className="mb-4 flex justify-center">
                                             <img

@@ -4,6 +4,7 @@ import {Link} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPenToSquare, faRightLeft, faTrash} from "@fortawesome/free-solid-svg-icons";
 
+
 // Ορισμός interface για τα βιβλία
 interface Book {
     id: number;
@@ -24,6 +25,13 @@ const FinishedPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
+    const [bookCount, setBookCount] = useState(0);
+
+    useEffect(() => {
+        fetch('http://localhost:8080/api/books/count')
+            .then(res => res.json())
+            .then(count => setBookCount(count))
+    }, []);
 
     const handleDelete = async (bookId:number) => {
         if(window.confirm('Are you sure?')) {
@@ -104,6 +112,9 @@ const FinishedPage = () => {
                         <h1 className="text-4xl font-bold text-amber-800 flex items-center justify-center px-4 relative">
                             <span className="text-center">Finished</span>
                         </h1>
+                        <h1 className="text-2xl font-bold text-amber-600 flex items-center justify-center px-4 relative">
+                            <span className="text-center p-1">Books: {bookCount}</span>
+                        </h1>
 
                         {/* SEARCH BAR  */}
                         <div className="max-w-md mx-auto mt-6">
@@ -117,16 +128,16 @@ const FinishedPage = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
                         {filteredBooks.length === 0 ? (
                             <div className="col-span-full text-center py-8">
-                                <p className="text-amber-600 text-lg">
+                                <p className="text-amber-800 text-lg">
                                     {searchTerm ? `No finished books found for "${searchTerm}"` : "No finished books yet."}
                                 </p>
                             </div>
                         ) : (
                             filteredBooks.map(book => (
-                                <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border border-amber-200">
+                                <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border-3 border-amber-100">
                                     {book.imageUrl && (
                                         <div className="mb-4 flex justify-center">
                                             <img

@@ -21,6 +21,13 @@ const LibraryPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
+    const[bookCount, setBookCount] = useState(0);
+
+    useEffect(() => {
+        fetch('http://localhost:8080/api/books/count')
+            .then(res => res.json())
+            .then(count => setBookCount(count));
+    }, []);
 
     const filteredBooks = books.filter(book =>
         book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -47,15 +54,15 @@ const LibraryPage = () => {
         const mockBooks: Book[] = [
             {
                 id: 1,
-                title: "The Great Gatsby",
-                author: "F. Scott Fitzgerald",
-                publisher: "Scribner",
-                pages: 180,
+                title: "Μονο για το καλοκαιρι",
+                author: "Abby Jimenez",
+                publisher: "Ψυχογιος",
+                pages: 520,
                 cost: 12.99,
                 readingStatus: "finished",
                 reviewRating: 4.5,
                 notes: "Classic novel about the American Dream",
-                imageUrl: ""
+                imageUrl: "./image/9786180161649_1446340560.webp"
             },
             {
                 id: 2,
@@ -66,7 +73,8 @@ const LibraryPage = () => {
                 cost: 0,
                 readingStatus: "currently_reading",
                 reviewRating: 4.8,
-                notes: "Dystopian social science fiction"
+                notes: "Dystopian social science fiction",
+                imageUrl: "./image/xlarge_20250116152943_to_chameno_eisitirio.jpeg"
             },
             {
                 id: 3,
@@ -77,7 +85,33 @@ const LibraryPage = () => {
                 cost: 15.75,
                 readingStatus: "to_read",
                 reviewRating: 0,
-                notes: "Fantasy adventure novel"
+                notes: "Fantasy adventure novel",
+                imageUrl: "./image/978-618-03-2045-9.jpg"
+            },
+
+            {
+                id: 3,
+                title: "The Hobbit",
+                author: "J.R.R. Tolkien",
+                publisher: "George Allen & Unwin",
+                pages: 310,
+                cost: 15.75,
+                readingStatus: "to_read",
+                reviewRating: 0,
+                notes: "Fantasy adventure novel",
+                imageUrl: "./image/978-618-03-2045-9.jpg"
+            },
+            {
+                id: 3,
+                title: "The Hobbit",
+                author: "J.R.R. Tolkien",
+                publisher: "George Allen & Unwin",
+                pages: 310,
+                cost: 15.75,
+                readingStatus: "to_read",
+                reviewRating: 0,
+                notes: "Fantasy adventure novel",
+                imageUrl: "./image/978-618-03-2045-9.jpg"
             }
         ];
 
@@ -121,6 +155,10 @@ const LibraryPage = () => {
                         <h1 className="text-4xl font-bold text-amber-800 flex items-center justify-center px-4 relative">
                             <span className="text-center">Library</span>
                         </h1>
+                        <h1 className="text-2xl font-bold text-amber-600 flex items-center justify-center px-4 relative">
+                            <span className="text-center p-1">Books: {bookCount}</span>
+                        </h1>
+
 
                         {/* SEARCH BAR -  */}
                         <div className="max-w-md mx-auto mt-6">
@@ -134,8 +172,8 @@ const LibraryPage = () => {
                         </div>
                     </div>
 
-                    {/* Βιβλία */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* books */}
+                    <div className=" grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
                         {filteredBooks.length === 0 ? (
                             <div className="col-span-full text-center py-8">
                                 <p className="text-amber-800 text-lg">
@@ -144,7 +182,7 @@ const LibraryPage = () => {
                             </div>
                         ) : (
                             filteredBooks.map(book => (
-                                <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border border-amber-200">
+                                <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border-3 border-amber-100">
                                     {book.imageUrl && (
                                         <div className="mb-4 flex justify-center">
                                             <img
@@ -155,7 +193,7 @@ const LibraryPage = () => {
                                         </div>
                                     )}
 
-                                    <h3 className="text-lg font-bold text-amber-800 mb-2">{book.title}</h3>
+                                    <h3 className=" text-lg font-bold text-amber-800 mb-2">{book.title}</h3>
                                     <p className="text-amber-600"><span className="font-semibold">Author:</span> {book.author}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Publisher:</span> {book.publisher}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Pages:</span> {book.pages}</p>
@@ -177,7 +215,7 @@ const LibraryPage = () => {
                                         <p className="text-amber-600 mt-2"><span className="font-semibold">Notes:</span> {book.notes}</p>
                                     )}
 
-                                    {/* 2 ΚΟΥΜΠΙΑ */}
+                                    {/* 2 buttons */}
                                     <div className="mt-4">
                                         <div className="flex gap-6 justify-center items-center">
                                             {/* Edit Button */}
