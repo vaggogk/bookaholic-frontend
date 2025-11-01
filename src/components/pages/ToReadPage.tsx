@@ -215,7 +215,7 @@ const ToReadPage = () => {
                                         <p className="text-amber-600 mt-2"><span className="font-semibold">Notes:</span> {book.notes}</p>
                                     )}
 
-                                    {/* 2 ΚΟΥΜΠΙΑ */}
+                                    {/* 2 buttom */}
                                     <div className="mt-4">
                                         <div className="flex gap-6 justify-center items-center">
                                             {/* Edit Button */}
