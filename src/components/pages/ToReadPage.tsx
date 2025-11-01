@@ -18,68 +18,119 @@ interface Book {
     notes?: string;
 }
 
+interface PageResponse<T> {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+}
+
 const ToReadPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
     const [bookCount, setBookCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [booksPerPage] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
 
-    useEffect(() => {
-        fetch('http://localhost:8080/api/books/count')
-            .then(res => res.json())
-            .then(count => setBookCount(count))
-    }, []);
-
-    const handleDelete = async (bookId:number) => {
-        if(window.confirm('Are you sure?')) {
-            try {
-                await fetch(`http://localhost:8080/api/books/${bookId}`, {
-                    method: 'DELETE'
-                });
-                setBooks(books.filter(book => book.id !== bookId));
-            } catch (error) {
-                console.error('Backend delete failed, using frontend delete:', error);
-            } finally {
-                setBooks(books.filter(book => book.id !== bookId))
-            }
-        }
-    }
-
-    const filteredBooks = books.filter(book =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.publisher.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-
-
-
-
+    // Fetch books from backend with pagination
     useEffect(() => {
         const fetchBooks = async () => {
+            setLoading(true);
             try {
-                const response = await fetch('http://localhost:8080/api/books/status/to_read');
-                if (response.ok) {
-                    const booksData = await response.json();
-                    setBooks(booksData);
+                // Convert to 0-based for backend
+                const backendPage = currentPage - 1;
+                const response = await fetch(
+                    `http://localhost:8080/api/books/status/to_read?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`
+                );
+
+                if (!response.ok) {
+                    throw new Error('Backend not available');
                 }
+
+                const data: PageResponse<Book> = await response.json();
+                setBooks(data.content);
+                setTotalPages(data.totalPages);
+                setTotalElements(data.totalElements);
             } catch (error) {
                 console.error('Error fetching books:', error);
+                // No fallback - just show empty state
+                setBooks([]);
+                setTotalPages(0);
+                setTotalElements(0);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchBooks();
-    }, []);
+    }, [currentPage, searchTerm, booksPerPage]);
 
-    // if (loading) {
-    //     return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
-    // }
+    // Fetch total count for "to_read" books
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:8080/api/books/status/to_read/count?search=${encodeURIComponent(searchTerm)}`
+                );
+                if (response.ok) {
+                    const count = await response.json();
+                    setBookCount(count);
+                }
+            } catch (error) {
+                console.error('Error fetching count:', error);
+                setBookCount(books.length);
+            }
+        };
+
+        fetchCount();
+    }, [searchTerm, books.length]);
+
+    // Reset to first page when search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
+
+    const handleDelete = async (bookId: number) => {
+        if(window.confirm('Are you sure you want to delete this book?')) {
+            try {
+                await fetch(`http://localhost:8080/api/books/${bookId}`, {
+                    method: 'DELETE'
+                });
+
+                // Refresh the current page after deletion
+                const backendPage = currentPage - 1;
+                const response = await fetch(
+                    `http://localhost:8080/api/books/status/to_read?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`
+                );
+                const data: PageResponse<Book> = await response.json();
+                setBooks(data.content);
+                setTotalPages(data.totalPages);
+                setTotalElements(data.totalElements);
+
+                // Also refresh count
+                const countResponse = await fetch('http://localhost:8080/api/books/status/to_read/count');
+                if (countResponse.ok) {
+                    const count = await countResponse.json();
+                    setBookCount(count);
+                }
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                // Fallback to frontend delete
+                setBooks(books.filter(book => book.id !== bookId));
+            }
+        }
+    }
+
+    if (loading) {
+        return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    }
 
     return (
         <div className="min-h-screen flex flex-col">
-
             {/* Return option */}
             <div className="absolute left-4 top-1/3 -translate-y-1/2">
                 <Link to="/home_page">
@@ -88,8 +139,8 @@ const ToReadPage = () => {
                                          className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
                         />
                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
-                                                Return back
-                                            </span>
+                            Return back
+                        </span>
                     </div>
                 </Link>
             </div>
@@ -110,11 +161,11 @@ const ToReadPage = () => {
                         <h1 className="text-4xl font-bold text-amber-800 flex items-center justify-center px-4 relative">
                             <span className="text-center">To Read</span>
                         </h1>
-                        <h1 className="text-2xl font-bold text-amber-600 flex items-center justify-center px-4 relative">
+                        <h1 className="text-2xl font-bold text-green-800 flex items-center justify-center px-4 relative">
                             <span className="text-center p-1">Books: {bookCount}</span>
                         </h1>
 
-                        {/* SEARCH BAR  */}
+                        {/* SEARCH BAR */}
                         <div className="max-w-md mx-auto mt-6">
                             <input
                                 type="text"
@@ -124,17 +175,18 @@ const ToReadPage = () => {
                                 className="w-full px-4 py-3 border border-amber-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-lg"
                             />
                         </div>
-
                     </div>
 
-
+                    {/* Books Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
-                        {filteredBooks.length === 0 ? (
+                        {books.length === 0 ? (
                             <div className="col-span-full text-center py-8">
-                                <p className="text-amber-800 text-lg">No books in your To Read list yet.</p>
+                                <p className="text-amber-800 text-lg">
+                                    {searchTerm ? `No books found for "${searchTerm}"` : "No books in your To Read list yet."}
+                                </p>
                             </div>
                         ) : (
-                            filteredBooks.map(book => (
+                            books.map(book => (
                                 <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border-3 border-amber-100">
                                     {book.imageUrl && (
                                         <div className="mb-4 flex justify-center">
@@ -167,7 +219,7 @@ const ToReadPage = () => {
                                     <div className="mt-4">
                                         <div className="flex gap-6 justify-center items-center">
                                             {/* Edit Button */}
-                                            <Link to="/edit" className="relative group">
+                                            <Link to={`/edit/${book.id}`} className="relative group">
                                                 <FontAwesomeIcon
                                                     icon={faPenToSquare}
                                                     className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
@@ -194,6 +246,55 @@ const ToReadPage = () => {
                             ))
                         )}
                     </div>
+
+                    {/* PAGINATION CONTROLS - Auto show when 2+ pages */}
+                    {totalPages > 1 && (
+                        <div className="flex flex-col items-center gap-4 mt-8">
+                            {/* Pagination buttons */}
+                            <div className="flex gap-2 items-center">
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 bg-amber-800 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
+                                >
+                                    Previous
+                                </button>
+
+                                <div className="flex gap-1">
+                                    {Array.from({length: Math.min(totalPages, 5)}, (_, i) => {
+                                        const pageNumber = i + 1;
+                                        return (
+                                            <button
+                                                key={pageNumber}
+                                                onClick={() => setCurrentPage(pageNumber)}
+                                                className={`px-3 py-1 rounded-lg ${
+                                                    currentPage === pageNumber
+                                                        ? 'bg-amber-600 text-white'
+                                                        : 'bg-amber-200 text-amber-700 hover:bg-amber-300'
+                                                }`}
+                                            >
+                                                {pageNumber}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-2 bg-amber-800 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
+                                >
+                                    Next
+                                </button>
+                            </div>
+
+                            {/* Page info */}
+                            <p className="text-amber-600">
+                                Page {currentPage} of {totalPages} •
+                                Showing {books.length} of {totalElements} books
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -17,23 +17,81 @@ interface Book {
     notes?: string;
 }
 
+interface PageResponse<T> {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+}
+
 const LibraryPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
-    const[bookCount, setBookCount] = useState(0);
+    const [bookCount, setBookCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1); // 1-based indexing
+    const [booksPerPage] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
 
+    // Fetch books from backend with pagination
     useEffect(() => {
-        fetch('http://localhost:8080/api/books/count')
-            .then(res => res.json())
-            .then(count => setBookCount(count));
-    }, []);
+        const fetchBooks = async () => {
+            setLoading(true);
+            try {
+                // Convert to 0-based for backend
+                const backendPage = currentPage - 1;
+                const response = await fetch(
+                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`
+                );
 
-    const filteredBooks = books.filter(book =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.publisher.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+                if (!response.ok) {
+                    throw new Error('Backend not available');
+                }
+
+                const data: PageResponse<Book> = await response.json();
+                setBooks(data.content);
+                setTotalPages(data.totalPages);
+                setTotalElements(data.totalElements);
+            } catch (error) {
+                console.error('Error fetching books:', error);
+                // No fallback - just show empty state
+                setBooks([]);
+                setTotalPages(0);
+                setTotalElements(0);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBooks();
+    }, [currentPage, searchTerm, booksPerPage]);
+
+    // Fetch total count for the header
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:8080/api/books/count?search=${encodeURIComponent(searchTerm)}`
+                );
+                if (response.ok) {
+                    const count = await response.json();
+                    setBookCount(count);
+                }
+            } catch (error) {
+                console.error('Error fetching count:', error);
+                setBookCount(0);
+            }
+        };
+
+        fetchCount();
+    }, [searchTerm]);
+
+    // Reset to first page when search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
 
     const handleDelete = async (bookId: number) => {
         if(window.confirm('Are you sure you want to delete this book?')){
@@ -41,83 +99,28 @@ const LibraryPage = () => {
                 await fetch(`http://localhost:8080/api/books/${bookId}`, {
                     method: 'DELETE'
                 });
+                // Refresh the current page after deletion
+                const backendPage = currentPage - 1;
+                const response = await fetch(
+                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`
+                );
+                const data: PageResponse<Book> = await response.json();
+                setBooks(data.content);
+                setTotalPages(data.totalPages);
+                setTotalElements(data.totalElements);
+
+                // Also refresh count
+                const countResponse = await fetch('http://localhost:8080/api/books/count');
+                if (countResponse.ok) {
+                    const count = await countResponse.json();
+                    setBookCount(count);
+                }
             } catch (error) {
-                console.error('Backend delete failed, using frontend delete:', error);
-            } finally {
-                setBooks(books.filter(book => book.id !== bookId))
+                console.error('Error deleting book:', error);
+                alert('Error deleting book. Please try again.');
             }
         }
     }
-
-    useEffect(() => {
-        // MOCK DATA
-        const mockBooks: Book[] = [
-            {
-                id: 1,
-                title: "Μονο για το καλοκαιρι",
-                author: "Abby Jimenez",
-                publisher: "Ψυχογιος",
-                pages: 520,
-                cost: 12.99,
-                readingStatus: "finished",
-                reviewRating: 4.5,
-                notes: "Classic novel about the American Dream",
-                imageUrl: "./image/9786180161649_1446340560.webp"
-            },
-            {
-                id: 2,
-                title: "1984",
-                author: "George Orwell",
-                publisher: "Secker & Warburg",
-                pages: 328,
-                cost: 0,
-                readingStatus: "currently_reading",
-                reviewRating: 4.8,
-                notes: "Dystopian social science fiction",
-                imageUrl: "./image/xlarge_20250116152943_to_chameno_eisitirio.jpeg"
-            },
-            {
-                id: 3,
-                title: "The Hobbit",
-                author: "J.R.R. Tolkien",
-                publisher: "George Allen & Unwin",
-                pages: 310,
-                cost: 15.75,
-                readingStatus: "to_read",
-                reviewRating: 0,
-                notes: "Fantasy adventure novel",
-                imageUrl: "./image/978-618-03-2045-9.jpg"
-            },
-
-            {
-                id: 3,
-                title: "The Hobbit",
-                author: "J.R.R. Tolkien",
-                publisher: "George Allen & Unwin",
-                pages: 310,
-                cost: 15.75,
-                readingStatus: "to_read",
-                reviewRating: 0,
-                notes: "Fantasy adventure novel",
-                imageUrl: "./image/978-618-03-2045-9.jpg"
-            },
-            {
-                id: 3,
-                title: "The Hobbit",
-                author: "J.R.R. Tolkien",
-                publisher: "George Allen & Unwin",
-                pages: 310,
-                cost: 15.75,
-                readingStatus: "to_read",
-                reviewRating: 0,
-                notes: "Fantasy adventure novel",
-                imageUrl: "./image/978-618-03-2045-9.jpg"
-            }
-        ];
-
-        setBooks(mockBooks);
-        setLoading(false);
-    }, []);
 
     if (loading) {
         return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
@@ -155,12 +158,11 @@ const LibraryPage = () => {
                         <h1 className="text-4xl font-bold text-amber-800 flex items-center justify-center px-4 relative">
                             <span className="text-center">Library</span>
                         </h1>
-                        <h1 className="text-2xl font-bold text-amber-600 flex items-center justify-center px-4 relative">
+                        <h1 className="text-2xl font-bold text-green-800 flex items-center justify-center px-4 relative">
                             <span className="text-center p-1">Books: {bookCount}</span>
                         </h1>
 
-
-                        {/* SEARCH BAR -  */}
+                        {/* SEARCH BAR */}
                         <div className="max-w-md mx-auto mt-6">
                             <input
                                 type="text"
@@ -172,16 +174,16 @@ const LibraryPage = () => {
                         </div>
                     </div>
 
-                    {/* books */}
-                    <div className=" grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
-                        {filteredBooks.length === 0 ? (
+                    {/* Books Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                        {books.length === 0 ? (
                             <div className="col-span-full text-center py-8">
                                 <p className="text-amber-800 text-lg">
                                     {searchTerm ? `No books found for "${searchTerm}"` : "No books in your library yet."}
                                 </p>
                             </div>
                         ) : (
-                            filteredBooks.map(book => (
+                            books.map(book => (
                                 <div key={book.id} className="bg-white p-4 rounded-lg shadow-md border-3 border-amber-100">
                                     {book.imageUrl && (
                                         <div className="mb-4 flex justify-center">
@@ -193,7 +195,7 @@ const LibraryPage = () => {
                                         </div>
                                     )}
 
-                                    <h3 className=" text-lg font-bold text-amber-800 mb-2">{book.title}</h3>
+                                    <h3 className="text-lg font-bold text-amber-800 mb-2">{book.title}</h3>
                                     <p className="text-amber-600"><span className="font-semibold">Author:</span> {book.author}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Publisher:</span> {book.publisher}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Pages:</span> {book.pages}</p>
@@ -215,11 +217,11 @@ const LibraryPage = () => {
                                         <p className="text-amber-600 mt-2"><span className="font-semibold">Notes:</span> {book.notes}</p>
                                     )}
 
-                                    {/* 2 buttons */}
+                                    {/* Action Buttons */}
                                     <div className="mt-4">
                                         <div className="flex gap-6 justify-center items-center">
                                             {/* Edit Button */}
-                                            <Link to="/edit" className="relative group">
+                                            <Link to={`/edit/${book.id}`} className="relative group">
                                                 <FontAwesomeIcon
                                                     icon={faPenToSquare}
                                                     className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
@@ -246,6 +248,55 @@ const LibraryPage = () => {
                             ))
                         )}
                     </div>
+
+                    {/* PAGINATION CONTROLS */}
+                    {totalPages > 1 && (
+                        <div className="flex flex-col items-center gap-4 mt-8">
+                            {/* Pagination buttons */}
+                            <div className="flex gap-2 items-center">
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 bg-amber-800 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
+                                >
+                                    Previous
+                                </button>
+
+                                <div className="flex gap-1">
+                                    {Array.from({length: Math.min(totalPages, 5)}, (_, i) => {
+                                        const pageNumber = i + 1;
+                                        return (
+                                            <button
+                                                key={pageNumber}
+                                                onClick={() => setCurrentPage(pageNumber)}
+                                                className={`px-3 py-1 rounded-lg ${
+                                                    currentPage === pageNumber
+                                                        ? 'bg-amber-600 text-white'
+                                                        : 'bg-amber-200 text-amber-700 hover:bg-amber-300'
+                                                }`}
+                                            >
+                                                {pageNumber}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-2 bg-amber-800 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
+                                >
+                                    Next
+                                </button>
+                            </div>
+
+                            {/* Page info */}
+                            <p className="text-amber-600">
+                                Page {currentPage} of {totalPages} •
+                                Showing {books.length} of {totalElements} books
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 
