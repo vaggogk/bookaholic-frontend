@@ -84,7 +84,7 @@ const LoginPage = () => {
                 </div>
             </div>
 
-            {/* Footer - πάντα στο κάτω μέρος */}
+            {/* Footer */}
             <footer className="bg-emerald-950 text-amber-100 flex-shrink-0 mt-auto">
                 <div className="container mx-auto py-6 text-center">
                     <div className="flex items-center justify-center space-x-3">

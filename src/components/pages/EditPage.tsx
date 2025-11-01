@@ -82,6 +82,7 @@ const EditPage = () => {
                             id="title"
                             type="text"
                             placeholder="Enter book title"
+                            required
                         />
                     </div>
 
@@ -95,6 +96,7 @@ const EditPage = () => {
                             id='author'
                             type="text"
                             placeholder="Enter author name"
+                            required
                         />
                     </div>
 
@@ -108,6 +110,7 @@ const EditPage = () => {
                             id="publisher"
                             type="text"
                             placeholder="Enter publisher"
+                            required
                         />
                     </div>
 
@@ -124,6 +127,7 @@ const EditPage = () => {
                                 type="number"
                                 min="0"
                                 placeholder="0"
+                                required
                             />
                         </div>
 
@@ -139,6 +143,7 @@ const EditPage = () => {
                                 min="0"
                                 step="any"
                                 placeholder="0.00"
+                                required
                             />
                         </div>
                     </div>

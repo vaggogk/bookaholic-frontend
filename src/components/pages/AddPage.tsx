@@ -29,7 +29,7 @@ const AddPage = () => {
         // (API call, database update, κλπ.)
         console.log("Book added successfully!");
 
-        // Μετάβαση στην αρχική σελίδα
+        // path to home page
         navigate("/home_page");
     };
 
