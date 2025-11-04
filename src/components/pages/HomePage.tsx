@@ -5,7 +5,6 @@ import {faCirclePlus, faRightFromBracket} from '@fortawesome/free-solid-svg-icon
 
 const HomePage = () => {
 
-
     return (
         <div className="min-h-screen flex flex-col">
             {/* Header */}
@@ -16,9 +15,6 @@ const HomePage = () => {
                     className="w-full h-full object-cover"
                 />
             </div>
-
-
-
 
             {/* Main Content */}
             <div className="flex-grow bg-amber-50 p-4">
@@ -95,6 +91,15 @@ const HomePage = () => {
                                     </div>
                                 </div>
                             </Link>
+
+                            <Link to="/gave_up" className="flex-1">
+                                <div className="bg-gradient-to-br from-green-100 to-amber-800 border-2 border-none rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 cursor-pointer hover:scale-105 hover:border-none min-w-0 h-full">
+                                    <div className="font-bold text-white w-full h-full py-27 flex items-center justify-center text-lg">
+                                        ❌ Gave up
+                                    </div>
+                                </div>
+                            </Link>
+
                         </div>
                     </form>
                 </div>
