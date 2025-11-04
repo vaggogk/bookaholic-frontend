@@ -7,7 +7,7 @@ const AddPage = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget as HTMLFormElement);
@@ -24,13 +24,29 @@ const AddPage = () => {
 
         };
 
-        console.log("Book data:", bookData);
 
-        // (API call, database update, κλπ.)
-        console.log("Book added successfully!");
 
-        // path to home page
-        navigate("/home_page");
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch('http://localhost:8080/api/books', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add book');
+            }
+
+            console.log("Book added successfully!");
+            navigate("/home_page");
+        } catch (error) {
+            console.error('Error adding book:', error);
+            alert('Error adding book. Please try again.');
+        }
     };
 
     return (
@@ -81,6 +97,7 @@ const AddPage = () => {
                         <input
                             type="file"
                             accept="image/*"
+                            name="image"
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
@@ -201,6 +218,7 @@ const AddPage = () => {
                                     <option value="to_read">📚 To Read</option>
                                     <option value="currently_reading">📖 Currently Reading</option>
                                     <option value="finished">✅ Finished</option>
+                                    <option value="finished">❌ Gave up</option>
                                 </select>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-800">
                                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
