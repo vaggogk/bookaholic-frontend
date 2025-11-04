@@ -35,16 +35,27 @@ const LibraryPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
 
+
+
     // Fetch books from backend with pagination
     useEffect(() => {
         const fetchBooks = async () => {
             setLoading(true);
             try {
                 // Convert to 0-based for backend
+                const token = localStorage.getItem('authToken');
                 const backendPage = currentPage - 1;
+
                 const response = await fetch(
-                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`
+                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
                 );
+
 
                 if (!response.ok) {
                     throw new Error('Backend not available');
@@ -65,6 +76,8 @@ const LibraryPage = () => {
             }
         };
 
+
+
         fetchBooks();
     }, [currentPage, searchTerm, booksPerPage]);
 
@@ -72,8 +85,14 @@ const LibraryPage = () => {
     useEffect(() => {
         const fetchCount = async () => {
             try {
+                const token = localStorage.getItem('authToken');
                 const response = await fetch(
-                    `http://localhost:8080/api/books/count?search=${encodeURIComponent(searchTerm)}`
+                    `http://localhost:8080/api/books/count?search=${encodeURIComponent(searchTerm)}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
                 );
                 if (response.ok) {
                     const count = await response.json();
@@ -96,13 +115,22 @@ const LibraryPage = () => {
     const handleDelete = async (bookId: number) => {
         if(window.confirm('Are you sure you want to delete this book?')){
             try {
+                const token = localStorage.getItem('authToken');
                 await fetch(`http://localhost:8080/api/books/${bookId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
                 // Refresh the current page after deletion
                 const backendPage = currentPage - 1;
                 const response = await fetch(
-                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`
+                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
                 );
                 const data: PageResponse<Book> = await response.json();
                 setBooks(data.content);
@@ -110,7 +138,12 @@ const LibraryPage = () => {
                 setTotalElements(data.totalElements);
 
                 // Also refresh count
-                const countResponse = await fetch('http://localhost:8080/api/books/count');
+                const countResponse = await fetch('http://localhost:8080/api/books/count',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
                 if (countResponse.ok) {
                     const count = await countResponse.json();
                     setBookCount(count);

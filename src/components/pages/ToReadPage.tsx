@@ -42,9 +42,16 @@ const ToReadPage = () => {
             setLoading(true);
             try {
                 // Convert to 0-based for backend
+                const token = localStorage.getItem('authToken');
                 const backendPage = currentPage - 1;
                 const response = await fetch(
-                    `http://localhost:8080/api/books/status/to_read?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`
+                    `http://localhost:8080/api/books/status/to_read?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
                 );
 
                 if (!response.ok) {
@@ -73,8 +80,15 @@ const ToReadPage = () => {
     useEffect(() => {
         const fetchCount = async () => {
             try {
+                const token = localStorage.getItem('authToken');
                 const response = await fetch(
-                    `http://localhost:8080/api/books/status/to_read/count?search=${encodeURIComponent(searchTerm)}`
+                    `http://localhost:8080/api/books/status/to_read/count?search=${encodeURIComponent(searchTerm)}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+
+                        }
+                    }
                 );
                 if (response.ok) {
                     const count = await response.json();
@@ -97,14 +111,23 @@ const ToReadPage = () => {
     const handleDelete = async (bookId: number) => {
         if(window.confirm('Are you sure you want to delete this book?')) {
             try {
+                const token = localStorage.getItem('authToken');
                 await fetch(`http://localhost:8080/api/books/${bookId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
 
                 // Refresh the current page after deletion
                 const backendPage = currentPage - 1;
                 const response = await fetch(
-                    `http://localhost:8080/api/books/status/to_read?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`
+                    `http://localhost:8080/api/books/status/to_read?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
                 );
                 const data: PageResponse<Book> = await response.json();
                 setBooks(data.content);
@@ -112,7 +135,13 @@ const ToReadPage = () => {
                 setTotalElements(data.totalElements);
 
                 // Also refresh count
-                const countResponse = await fetch('http://localhost:8080/api/books/status/to_read/count');
+                const countResponse = await fetch('http://localhost:8080/api/books/status/to_read/count',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                    );
                 if (countResponse.ok) {
                     const count = await countResponse.json();
                     setBookCount(count);
