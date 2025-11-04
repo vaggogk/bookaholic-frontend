@@ -26,7 +26,7 @@ function App() {
                 <Route path="to_read" element={<ToReadPage />}/>
                 <Route path="finished" element={<FinishedPage />}/>
                 {/*<Route path="go-back" element={<HomePage />}/>*/}
-                <Route path="edit" element={<EditPage />}/>
+                <Route path="edit/:id" element={<EditPage />}/>
                 <Route path="home_page" element={<HomePage />}/>
             </Routes>
         </BrowserRouter>
