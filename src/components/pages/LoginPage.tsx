@@ -9,7 +9,6 @@ const LoginPage = () => {
     const handleSubmit = async (e:React.FormEvent) => {
         e.preventDefault();
 
-
         const formData = new FormData(e.currentTarget as HTMLFormElement);
         const loginData = {
             username: formData.get('username') as string,
@@ -28,10 +27,21 @@ const LoginPage = () => {
             if (response.ok) {
                 const userData = await response.json();
                 console.log('Login successful:', userData);
+
+                // 🎯 ΚΡΙΤΙΚΟ: ΑΠΟΘΗΚΕΥΣΗ TOKEN & USER DATA
+                localStorage.setItem('authToken', userData.token);
+                localStorage.setItem('userId', userData.id);
+                localStorage.setItem('username', userData.username);
+
                 navigate("/home_page");
+            } else {
+                // Handle login error
+                console.error('Login failed:', response.status);
+                alert('Login failed. Please check your credentials.');
             }
         } catch (error) {
             console.error('Login failed:', error);
+            alert('Login failed. Please try again.');
         }
     }
 
