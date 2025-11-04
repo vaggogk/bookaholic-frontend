@@ -236,8 +236,9 @@ const LibraryPage = () => {
                                     <p className="text-amber-600"><span className="font-semibold">Status:</span>
                                         <span className={`ml-1 ${
                                             book.readingStatus === 'finished' ? 'text-green-800' :
-                                                book.readingStatus === 'currently_reading' ? 'text-pink-800' :
-                                                    'text-blue-800'
+                                                book.readingStatus === 'currently_reading' ? 'text-yellow-800' :
+                                                    book.readingStatus === 'to_read' ? 'text-blue-800' :
+                                                    'text-pink-800'
                                         }`}>
                                             {book.readingStatus}
                                         </span>

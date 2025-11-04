@@ -233,7 +233,12 @@ const ToReadPage = () => {
                                     <p className="text-amber-600"><span className="font-semibold">Pages:</span> {book.pages}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Cost:</span> €{book.cost}</p>
                                     <p className="text-amber-600"><span className="font-semibold">Status:</span>
-                                        <span className="ml-1 text-amber-600">
+                                        <span className={`ml-1 ${
+                                            book.readingStatus === 'finished' ? 'text-green-800' :
+                                                book.readingStatus === 'currently_reading' ? 'text-yellow-800' :
+                                                    book.readingStatus === 'to_read' ? 'text-blue-800' :
+                                                        'text-pink-800'
+                                        }`}>
                                             {book.readingStatus}
                                         </span>
                                     </p>
