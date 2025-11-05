@@ -160,6 +160,7 @@ const LibraryPage = () => {
     }
 
     return (
+
         <div className="min-h-screen flex flex-col">
             {/* Header */}
             <div className="h-64 relative overflow-hidden flex-shrink-0">
