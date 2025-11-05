@@ -1,9 +1,44 @@
 import '../styles/homePage.css'
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCirclePlus, faRightFromBracket} from '@fortawesome/free-solid-svg-icons';
+import React from "react";
+
+
 
 const HomePage = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        try {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                await fetch('http://localhost:8080/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                });
+            }
+
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+
+            navigate('/login');
+
+        } catch (error) {
+            console.error('Σφάλμα κατά το logout:', error);
+
+            localStorage.clear();
+            navigate('/login');
+        }
+    }
+
+
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -41,8 +76,10 @@ const HomePage = () => {
 
                                 {/* Logout */}
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                    <Link to="/log_out">
-                                    <div className="relative group">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="relative group p-2 hover:bg-amber-50 rounded-full transition duration-200"
+                                    >
                                         <FontAwesomeIcon
                                             icon={faRightFromBracket}
                                             className="text-amber-800 text-2xl cursor-pointer hover:text-amber-900 transition"
@@ -50,8 +87,7 @@ const HomePage = () => {
                                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap">
                                             Logout
                                         </span>
-                                    </div>
-                                    </Link>
+                                    </button>
                                 </div>
                             </h1>
 
