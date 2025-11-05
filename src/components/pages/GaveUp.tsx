@@ -45,7 +45,7 @@ const GaveUp = () => {
                 const token = localStorage.getItem('authToken');
                 const backendPage = currentPage - 1;
                 const response = await fetch(
-                    `http://localhost:8080/api/books/status/to_read?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`,
+                    `http://localhost:8080/api/books/status/gave_up?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`,
