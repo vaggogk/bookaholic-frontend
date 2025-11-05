@@ -28,7 +28,7 @@ const LoginPage = () => {
                 const userData = await response.json();
                 console.log('Login successful:', userData);
 
-                // 🎯 ΚΡΙΤΙΚΟ: ΑΠΟΘΗΚΕΥΣΗ TOKEN & USER DATA
+
                 localStorage.setItem('authToken', userData.token);
                 localStorage.setItem('userId', userData.id);
                 localStorage.setItem('username', userData.username);
