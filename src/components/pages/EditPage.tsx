@@ -82,7 +82,8 @@ const EditPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to update book');
+                const errorMessage = await response.text();
+               throw new Error(errorMessage || 'Failed to update book');
             }
 
             navigate("/home_page");

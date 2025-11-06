@@ -55,7 +55,8 @@ const ToReadPage = () => {
                 );
 
                 if (!response.ok) {
-                    throw new Error('Backend not available');
+                    const errorMessage = await response.text();
+                    throw new Error(errorMessage || 'Failed to fetch books');
                 }
 
                 const data: PageResponse<Book> = await response.json();
@@ -93,6 +94,10 @@ const ToReadPage = () => {
                 if (response.ok) {
                     const count = await response.json();
                     setBookCount(count);
+                }else {
+                    const errorMessage = await response.text();
+                    console.error('Count fetch error:', errorMessage);
+                    setBookCount(books.length);
                 }
             } catch (error) {
                 console.error('Error fetching count:', error);

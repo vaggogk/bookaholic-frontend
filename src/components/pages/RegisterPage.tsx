@@ -52,15 +52,20 @@ const RegisterPage = () => {
             });
 
             console.log('Response status:', response.status);
-            const result = await response.json();
-            console.log('Response data:', result);
 
             if (!response.ok) {
-                setBackendErrors(result.errors || ['Registration failed - please try again']);
-            } else {
+
+                const errorMessage = await response.text();
+                setBackendErrors([errorMessage]);
+                return;
+            }
+                const result = await response.json();
+                console.log('Response data:', result);
+
+
                 alert('Registration successful! Please login.');
                navigate("/login");
-            }
+
         } catch (error) {
             console.error('Fetch error:', error);
             setBackendErrors(['Network error - please check if server is running']);

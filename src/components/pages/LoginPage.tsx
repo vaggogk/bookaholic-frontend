@@ -24,7 +24,11 @@ const LoginPage = () => {
                 body: JSON.stringify(loginData)
             });
 
-            if (response.ok) {
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                alert(errorMessage || 'Login failed. Please check your credentials.');
+                return;
+            }
                 const userData = await response.json();
                 console.log('Login successful:', userData);
 
@@ -34,11 +38,7 @@ const LoginPage = () => {
                 localStorage.setItem('username', userData.username);
 
                 navigate("/home_page");
-            } else {
-                // Handle login error
-                console.error('Login failed:', response.status);
-                alert('Login failed. Please check your credentials.');
-            }
+
         } catch (error) {
             console.error('Login failed:', error);
             alert('Login failed. Please try again.');

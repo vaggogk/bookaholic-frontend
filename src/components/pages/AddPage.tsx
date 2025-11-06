@@ -38,10 +38,11 @@ const AddPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to add book');
+                throw new Error(await response.text() ||'Failed to add book');
             }
+            console.log("Book added successfully! Status:", response.status);
 
-            console.log("Book added successfully!");
+            alert('✅ Book added successfully!');
             navigate("/home_page");
         } catch (error) {
             console.error('Error adding book:', error);
