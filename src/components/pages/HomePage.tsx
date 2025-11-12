@@ -13,31 +13,14 @@ const HomePage = () => {
         e.preventDefault();
         e.stopPropagation();
 
-        try {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                await fetch('http://localhost:8080/api/auth/logout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                });
-            }
-
             localStorage.removeItem('authToken');
             localStorage.removeItem('userData');
             localStorage.removeItem('username');
 
             navigate('/login');
 
-        } catch (error) {
-            console.error('Σφάλμα κατά το logout:', error);
-
-            localStorage.clear();
-            navigate('/login');
         }
-    }
+
 
 
 
