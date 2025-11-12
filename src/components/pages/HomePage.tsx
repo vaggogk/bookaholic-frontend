@@ -27,6 +27,7 @@ const HomePage = () => {
 
             localStorage.removeItem('authToken');
             localStorage.removeItem('userData');
+            localStorage.removeItem('username');
 
             navigate('/login');
 
