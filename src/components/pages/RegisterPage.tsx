@@ -194,6 +194,7 @@ const RegisterPage = () => {
                             <li>One uppercase letter (A-Z)</li>
                             <li>One lowercase letter (a-z)</li>
                             <li>One number (0-9)</li>
+                            <li>One special character (!@#$%^&+=)</li>
                         </ul>
                     </div>
 
