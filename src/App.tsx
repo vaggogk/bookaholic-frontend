@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router"; // Αλλαγή εδώ
+import { BrowserRouter, Routes, Route } from "react-router";
 import './App.css'
 import HomePage from "./components/pages/HomePage.tsx";
 import LoginPage from "./components/pages/LoginPage.tsx";
