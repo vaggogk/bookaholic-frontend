@@ -190,7 +190,7 @@ const RegisterPage = () => {
                     <div className="password-requirements bg-amber-50 border border-amber-200 rounded-lg p-4">
                         <h4 className="font-bold text-amber-800 mb-2">Password Requirements:</h4>
                         <ul className="list-disc list-inside text-amber-700 space-y-1">
-                            <li>At least 8 characters long</li>
+                            <li>At least 12 characters long</li>
                             <li>One uppercase letter (A-Z)</li>
                             <li>One lowercase letter (a-z)</li>
                             <li>One number (0-9)</li>
