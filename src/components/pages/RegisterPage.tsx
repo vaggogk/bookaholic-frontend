@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
 const RegisterPage = () => {
@@ -12,7 +12,7 @@ const RegisterPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const  navigate = useNavigate();
 
-    // Ορισμός τύπου για το change event
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -29,7 +29,7 @@ const RegisterPage = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Προσθήκη client-side validation για confirm password
+
         if (formData.password !== formData.confirmPassword) {
             setBackendErrors(['Passwords do not match']);
             return;
@@ -44,10 +44,12 @@ const RegisterPage = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     username: formData.username,
                     email: formData.email,
-                    password: formData.password
+                    password: formData.password,
+                    confirmPassword: formData.confirmPassword
                 })
             });
 
@@ -107,6 +109,7 @@ const RegisterPage = () => {
                             className="w-full p-3 border-2 border-amber-800 rounded-lg focus:border-amber-800 focus:ring-2 focus:ring-amber-700 transition-colors text-amber-900 placeholder-amber-400"
                             name="username"
                             type="text"
+                            id="username"
                             value={formData.username}
                             onChange={handleChange}
                             placeholder="Enter your username (3-20 characters)"
@@ -123,6 +126,7 @@ const RegisterPage = () => {
                             className="w-full p-3 border-2 border-amber-800 rounded-lg focus:border-amber-800 focus:ring-2 focus:ring-amber-700 transition-colors text-amber-900 placeholder-amber-400"
                             type="email"
                             name="email"
+                            id="email"
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Enter your email"
@@ -139,6 +143,7 @@ const RegisterPage = () => {
                             className="w-full p-3 border-2 border-amber-800 rounded-lg focus:border-amber-800 focus:ring-2 focus:ring-amber-700 transition-colors text-amber-900 placeholder-amber-400"
                             type="password"
                             name="password"
+                            id="password"
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="Enter password"
@@ -155,6 +160,7 @@ const RegisterPage = () => {
                             className="w-full p-3 border-2 border-amber-800 rounded-lg focus:border-amber-800 focus:ring-2 focus:ring-amber-700 transition-colors text-amber-900 placeholder-amber-400"
                             type="password"
                             name="confirmPassword"
+                            id="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             placeholder="Confirm your password"
