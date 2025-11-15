@@ -12,7 +12,7 @@ const AddPage = () => {
 
         const formData = new FormData(e.currentTarget as HTMLFormElement);
         const bookData = {
-            imageUrl: imagePreview,
+            coverImage: imagePreview,
             title: formData.get('title') as string,
             author: formData.get('author') as string,
             publisher: formData.get('publisher') as string,
@@ -98,7 +98,8 @@ const AddPage = () => {
                         <input
                             type="file"
                             accept="image/*"
-                            name="image"
+                            name="coverImage"
+                            id="coverImage"
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
