@@ -5,7 +5,7 @@ import { faRightLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface Book {
     id: number;
-    imageUrl?: string;
+   coverImage?: string;
     title: string;
     author: string;
     publisher: string;
@@ -30,8 +30,10 @@ const EditPage = () => {
                 const token = localStorage.getItem('authToken');
                 const response = await fetch(`http://localhost:8080/api/books/${id}`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
                 });
 
                 if (!response.ok) {
@@ -40,7 +42,7 @@ const EditPage = () => {
 
                 const bookData = await response.json();
                 setBook(bookData);
-                setImagePreview(bookData.imageUrl || null);
+                setImagePreview(bookData.coverImage || null);
             } catch (error) {
                 console.error('Error fetching book:', error);
 
@@ -59,7 +61,7 @@ const EditPage = () => {
 
         const formData = new FormData(e.currentTarget as HTMLFormElement);
         const bookData = {
-            imageUrl: imagePreview,
+           coverImage: imagePreview,
             title: formData.get('title') as string,
             author: formData.get('author') as string,
             publisher: formData.get('publisher') as string,
@@ -153,6 +155,8 @@ const EditPage = () => {
                         <input
                             type="file"
                             accept="image/*"
+                            name="coverImage"
+                            id="coverImage"
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
