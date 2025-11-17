@@ -84,19 +84,32 @@ const EditPage = () => {
             });
 
             if (!response.ok) {
-                const errorMessage = await response.text();
-               throw new Error(errorMessage || 'Failed to update book');
+                const errorText = await response.text();
+
+                //  Duplicate book error handling
+                if (errorText.includes('unique_book_title_per_user') || errorText.includes('Duplicate entry')) {
+                    alert(' This book title already exists in your library! Please use a different title.');
+                } else {
+                    alert(`Error: ${errorText || 'Failed to update book'}`);
+                }
+                return;
             }
 
+            console.log("Book Update successfully! Status:", response.status);
+            alert('✅ Book updated successfully!');
             navigate("/home_page");
+
         } catch (error) {
             console.error('Error updating book:', error);
             alert('Error updating book. Please try again.');
         }
     };
-
     if (loading) {
-        return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800"></div>
+            </div>
+        );
     }
 
     if (!book) {
@@ -149,7 +162,9 @@ const EditPage = () => {
 
                     {/* Book Cover Upload */}
                     <div className="space-y-2 text-center">
-                        <label className="block font-bold text-lg text-amber-800">
+                        <label
+                            htmlFor="coverImage"
+                            className="block font-bold text-lg text-amber-800">
                             Book Cover Image
                         </label>
                         <input

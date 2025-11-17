@@ -1,4 +1,4 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import {Link, useNavigate} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faRightLeft} from "@fortawesome/free-solid-svg-icons";
@@ -38,12 +38,21 @@ const AddPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error(await response.text() ||'Failed to add book');
-            }
-            console.log("Book added successfully! Status:", response.status);
+                const errorText = await response.text();
 
+                //  Duplicate book error handling
+                if (errorText.includes('unique_book_title_per_user') || errorText.includes('Duplicate entry')) {
+                    alert(' This book title already exists in your library! Please use a different title.');
+                } else {
+                    alert(`Error: ${errorText || 'Failed to add book'}`);
+                }
+                return;
+            }
+
+            console.log("Book added successfully! Status:", response.status);
             alert('✅ Book added successfully!');
             navigate("/home_page");
+
         } catch (error) {
             console.error('Error adding book:', error);
             alert('Error adding book. Please try again.');
@@ -91,7 +100,9 @@ const AddPage = () => {
 
                     {/* Book Cover Upload */}
                     <div className="space-y-2 text-center">
-                        <label className="block font-bold text-lg text-amber-800">
+                        <label
+                            htmlFor="coverImage"
+                            className="block font-bold text-lg text-amber-800">
                             Book Cover Image
                         </label>
 
@@ -172,12 +183,12 @@ const AddPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                         {/* Total Pages */}
                         <div className="space-y-2">
-                            <label htmlFor="page" className="block font-bold text-lg text-amber-800">
+                            <label htmlFor="pages" className="block font-bold text-lg text-amber-800">
                                 Total Pages
                             </label>
                             <input
                                 className="w-full p-3 border-2 border-amber-700 rounded-lg focus:border-amber-800 focus:ring-2 focus:ring-amber-800 transition-colors text-amber-900 placeholder-amber-700"
-                                id="page"
+                                id="pages"
                                 type="number"
                                 name="pages"
                                 min="0"
