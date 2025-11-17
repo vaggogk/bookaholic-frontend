@@ -25,6 +25,23 @@ interface PageResponse<T> {
     number: number;
 }
 
+function useDebounce(value: string, delay: number) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+}
+
 const LibraryPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [books, setBooks] = useState<Book[]>([]);
@@ -34,6 +51,7 @@ const LibraryPage = () => {
     const [booksPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
+    const debouncedSearchTerm = useDebounce(searchTerm, 1000);
 
     // Fetch books from backend with pagination
     useEffect(() => {
@@ -49,7 +67,7 @@ const LibraryPage = () => {
                 const backendPage = currentPage - 1;
 
                 const response = await fetch(
-                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`,
+                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(debouncedSearchTerm)}`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -81,12 +99,12 @@ const LibraryPage = () => {
         };
 
         fetchBooks();
-    }, [currentPage, searchTerm, booksPerPage]);
+    }, [currentPage, debouncedSearchTerm, booksPerPage]);
 
     // Reset to first page when search changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm]);
+    }, [debouncedSearchTerm]);
 
     const handleDelete = async (bookId: number) => {
         if(window.confirm('Are you sure you want to delete this book?')){
@@ -107,7 +125,7 @@ const LibraryPage = () => {
                 // Refresh books
                 const backendPage = currentPage - 1;
                 const response = await fetch(
-                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(searchTerm)}`,
+                    `http://localhost:8080/api/books?page=${backendPage}&size=${booksPerPage}&search=${encodeURIComponent(debouncedSearchTerm)}`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -163,14 +181,14 @@ const LibraryPage = () => {
             </div>
 
             {/* Main Content  */}
-            <div className="flex-grow bg-amber-50 p-4">
+            <div className="flex-grow bg-amber-50 p-1">
                 <div className="max-w-7xl mx-auto">
                     <div className="border-2 border-none p-4 md:p-6 lg:p-8 rounded-lg h-full">
                         <div className="mb-6 md:mb-8">
-                            <h1 className="text-3xl md:text-4xl font-bold text-amber-800 text-center">
+                            <h1 className="text-3xl md:text-5xl font-bold text-amber-800 text-center">
                                 Library
                             </h1>
-                            <h1 className="text-xl md:text-2xl font-bold text-green-800 text-center mt-2">
+                            <h1 className="text-xl md:text-2xl font-bold text-amber-700 text-center mt-2">
                                 Books: {bookCount}
                             </h1>
 
@@ -178,6 +196,8 @@ const LibraryPage = () => {
                             <div className="max-w-md mx-auto mt-4 md:mt-6">
                                 <input
                                     type="text"
+                                    id="book-search"
+                                    name="search"
                                     placeholder="🔍 Search by title, author or publisher..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -196,7 +216,13 @@ const LibraryPage = () => {
                                 </div>
                             ) : (
                                 books.map(book => (
-                                    <div key={book.id} className="bg-white p-3 md:p-4 rounded-lg shadow-md border-2 border-amber-100">
+                                    <div key={book.id} className={`bg-white p-3 md:p-4 rounded-lg shadow-md border-4 ${
+                                        book.readingStatus === 'finished' ? 'border-green-100' :
+                                            book.readingStatus === 'currently_reading' ? 'border-yellow-100' :
+                                                book.readingStatus === 'to_read' ? 'border-blue-100' :
+                                                    'border-red-100'}
+                                                    `}
+                                    >
                                         {book.coverImage && (
                                             <div className="mb-3 flex justify-center">
                                                 <img
@@ -225,13 +251,13 @@ const LibraryPage = () => {
                                             </p>
                                             <p className="text-amber-700">
                                                 <span className="font-bold text-amber-900">Cost:</span>
-                                                <span className="text-amber-600 ml-1">€{book.cost}</span>
+                                                <span className="text-amber-600 ml-1">{book.cost} €</span>
                                             </p>
                                             <p className="text-amber-700">
                                                 <span className="font-bold text-amber-900">Status:</span>
                                                 <span className={`ml-1 font-bold ${
                                                     book.readingStatus === 'finished' ? 'text-green-600' :
-                                                        book.readingStatus === 'currently_reading' ? 'text-amber-600' :
+                                                        book.readingStatus === 'currently_reading' ? 'text-yellow-400' :
                                                             book.readingStatus === 'to_read' ? 'text-blue-600' :
                                                                 'text-red-600'
                                                 }`}>
