@@ -29,11 +29,37 @@ const RegisterPage = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        setBackendErrors([]);
+
+        // Password validation
+        const passwordErrors = [];
+
+        if (formData.password.length < 12) {
+            passwordErrors.push("Password must be at least 12 characters long");
+        }
+        if (!/(?=.*[a-z])/.test(formData.password)) {
+            passwordErrors.push("Password must contain at least one lowercase letter");
+        }
+        if (!/(?=.*[A-Z])/.test(formData.password)) {
+            passwordErrors.push("Password must contain at least one uppercase letter");
+        }
+        if (!/(?=.*\d)/.test(formData.password)) {
+            passwordErrors.push("Password must contain at least one number");
+        }
+        if (!/(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])/.test(formData.password)) {
+            passwordErrors.push("Password must contain at least one special character");
+        }
+
+        if (passwordErrors.length > 0) {
+            setBackendErrors(passwordErrors);
+            return;
+        }
 
         if (formData.password !== formData.confirmPassword) {
             setBackendErrors(['Passwords do not match']);
             return;
         }
+
 
         setIsLoading(true);
         setBackendErrors([]);
@@ -170,11 +196,11 @@ const RegisterPage = () => {
 
                     {/* Backend Errors */}
                     {backendErrors.length > 0 && (
-                        <div className="backend-errors bg-red-50 border border-red-300 rounded-lg p-4">
-                            <h4 className="text-red-800 font-bold mb-2">Please fix the following errors:</h4>
+                        <div className="backend-errors bg-green-50 border border-amber-800 rounded-lg p-4">
+                            <h4 className="text-red-800 font-bold mb-2">Password Requirements:</h4>
                             {backendErrors.map((error, index) => (
-                                <div key={index} className="error-item text-red-600 flex items-center mt-1">
-                                    <span className="mr-2">✗</span>
+                                <div key={index} className="error-item text-red-800 flex items-center mt-1">
+                                    <span className="mr-2">📝</span>
                                     {error}
                                 </div>
                             ))}
@@ -190,18 +216,6 @@ const RegisterPage = () => {
                         >
                             {isLoading ? 'Creating Account...' : ' Create Account'}
                         </button>
-                    </div>
-
-                    {/* Password Requirements */}
-                    <div className="password-requirements bg-amber-50 border border-amber-200 rounded-lg p-4">
-                        <h4 className="font-bold text-amber-800 mb-2">Password Requirements:</h4>
-                        <ul className="list-disc list-inside text-amber-700 space-y-1">
-                            <li>At least 12 characters long</li>
-                            <li>One uppercase letter (A-Z)</li>
-                            <li>One lowercase letter (a-z)</li>
-                            <li>One number (0-9)</li>
-                            <li>One special character (!@#$%^&+=)</li>
-                        </ul>
                     </div>
 
                     {/* Login Link */}
