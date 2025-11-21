@@ -2,10 +2,11 @@ import '../styles/loginPage.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faUser,faLock,faCircleUser} from '@fortawesome/free-solid-svg-icons';
 import {Link, useNavigate} from "react-router";
-import React from "react";
+import React, {useState} from "react";
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const [backendErrors, setBackendErrors] = useState<string[]>([]);
 
     const handleSubmit = async (e:React.FormEvent) => {
         e.preventDefault();
@@ -27,7 +28,7 @@ const LoginPage = () => {
 
             if (!response.ok) {
                 const errorMessage = await response.text();
-                alert(errorMessage || 'Login failed. Please check your credentials.');
+                setBackendErrors([errorMessage]);
                 return;
             }
                 const userData = await response.json();
@@ -78,6 +79,18 @@ const LoginPage = () => {
                             <input type="password" id="password" name="password" required />
                         </div>
 
+                        {backendErrors.length > 0 && (
+                            <div className="backend-errors bg-amber-50 border border-amber-300 rounded-lg p-4 my-1">
+                                <h4 className="text-red-800 font-bold mb-2">Error:</h4>
+                                {backendErrors.map((error, index) => (
+                                    <div key={index} className="error-item text-red-800 flex items-center mt-1">
+                                        <span className="mr-2">❌</span>
+                                        {error}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
                         <button type="submit" className="login-btn font-bold text-lg shadow-lg">
                             Σύνδεση
                         </button>
@@ -102,6 +115,8 @@ const LoginPage = () => {
                     </form>
                 </div>
             </div>
+
+
 
             {/* Footer */}
             <footer className="bg-emerald-950 text-amber-100 flex-shrink-0 mt-auto">
