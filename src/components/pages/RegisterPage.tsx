@@ -12,7 +12,6 @@ const RegisterPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const  navigate = useNavigate();
 
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
