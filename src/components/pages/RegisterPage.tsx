@@ -197,7 +197,7 @@ const RegisterPage = () => {
                     {/* Backend Errors */}
                     {backendErrors.length > 0 && (
                         <div className="backend-errors bg-green-50 border border-amber-800 rounded-lg p-4">
-                            <h4 className="text-red-800 font-bold mb-2">Password Requirements:</h4>
+                            <h4 className="text-red-800 font-bold mb-2">Requirements:</h4>
                             {backendErrors.map((error, index) => (
                                 <div key={index} className="error-item text-red-800 flex items-center mt-1">
                                     <span className="mr-2">📝</span>
