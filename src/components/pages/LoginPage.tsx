@@ -2,6 +2,7 @@ import '../styles/loginPage.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faUser,faLock,faCircleUser} from '@fortawesome/free-solid-svg-icons';
 import {Link, useNavigate} from "react-router";
+import React from "react";
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -81,15 +82,23 @@ const LoginPage = () => {
                             Σύνδεση
                         </button>
 
-                        <Link to="/register_page">
-                            <div className="form-group ">
-                                <p className= "mt-7 ">
-                                    Don't have an account?
-                                    <a href="/register_page" className="p-1 text-amber-600 hover:text-amber-800 font-bold underline">
-                                        Sign up</a>
-                                    </p>
-                            </div>
-                        </Link>
+                        <p className="mt-5 text-center text-red-800">
+                            Forgot your password?{" "}
+                            <Link
+                                to="/forgot_password"
+                                className=" p-1 text-red-700 hover:text-amber-800 font-bold underline"
+                            >Click here
+                            </Link>
+                        </p>
+
+                        <p className="mt-1 text-center text-amber-800">
+                            Don't have an account?{" "}
+                            <Link
+                                to="/register_page"
+                                className="p-1 text-amber-600 hover:text-amber-800 font-bold underline"
+                            >Sign up
+                            </Link>
+                        </p>
                     </form>
                 </div>
             </div>
