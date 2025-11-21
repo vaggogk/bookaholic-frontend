@@ -267,11 +267,14 @@ const CurrentlyReadingPage = () => {
                                         )}
 
                                         {book.notes && (
-                                            <p className="text-amber-700 mt-2 text-sm">
+                                            <div className="text-amber-700 mt-2 text-sm">
                                                 <span className="font-bold text-amber-900">Notes:</span>
-                                                <span className="text-amber-600 ml-1 line-clamp-2">{book.notes}</span>
-                                            </p>
+                                                <div className="max-h-20 overflow-y-auto">
+                                                    <span className="text-amber-600 ml-1 block">{book.notes}</span>
+                                                </div>
+                                            </div>
                                         )}
+
 
                                         {/* Action Buttons */}
                                         <div className="mt-3">

@@ -227,7 +227,7 @@ const FinishedPage = () => {
                                             </div>
                                         )}
 
-                                        <h3 className="text-md md:text-lg font-bold text-amber-800 mb-2 line-clamp-2">{book.title}</h3>
+                                        <h3 className="text-md md:text-lg font-bold text-amber-800  mb-2 line-clamp-3">{book.title}</h3>
 
                                         {/* Book Details */}
                                         <div className="space-y-1 text-sm">
@@ -268,10 +268,12 @@ const FinishedPage = () => {
                                         )}
 
                                         {book.notes && (
-                                            <p className="text-amber-700 mt-2 text-sm">
+                                            <div className="text-amber-700 mt-2 text-sm">
                                                 <span className="font-bold text-amber-900">Notes:</span>
-                                                <span className="text-amber-600 ml-1 line-clamp-2">{book.notes}</span>
-                                            </p>
+                                                <div className="max-h-20 overflow-y-auto">
+                                                    <span className="text-amber-600 ml-1 block">{book.notes}</span>
+                                                </div>
+                                            </div>
                                         )}
 
                                         {/* Action Buttons */}
