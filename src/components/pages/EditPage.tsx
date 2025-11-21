@@ -203,6 +203,8 @@ const EditPage = () => {
                             id="title"
                             name="title"
                             type="text"
+                            pattern=".*\S+.*"
+                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter book title"
                             defaultValue={book.title}
                             required
@@ -219,6 +221,8 @@ const EditPage = () => {
                             id='author'
                             name="author"
                             type="text"
+                            pattern=".*\S+.*"
+                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter author name"
                             defaultValue={book.author}
                             required
@@ -235,6 +239,8 @@ const EditPage = () => {
                             id="publisher"
                             name="publisher"
                             type="text"
+                            pattern=".*\S+.*"
+                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter publisher"
                             defaultValue={book.publisher}
                             required
