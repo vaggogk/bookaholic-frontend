@@ -10,6 +10,8 @@ import ToReadPage from "./components/pages/ToReadPage.tsx";
 import FinishedPage from "./components/pages/FinishedPage.tsx";
 import EditPage from "./components/pages/EditPage.tsx";
 import GaveUp from "./components/pages/GaveUp.tsx";
+// import ForgotPassword from "./components/pages/ForgotPassword.tsx";
+
 
 function App() {
     return (
@@ -28,6 +30,8 @@ function App() {
                 <Route path="edit/:id" element={<EditPage />}/>
                 <Route path="log_out" element={<LoginPage/>}/>
                 <Route path="register_page" element={<RegisterPage/>}/>
+                {/*<Route path="forgot_password" element={<ForgotPassword/>}/>*/}
+
                 {/*<Route path="go-back" element={<HomePage />}/>*/}
             </Routes>
         </BrowserRouter>
