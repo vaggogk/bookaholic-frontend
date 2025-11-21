@@ -6,6 +6,7 @@ import {faRightLeft} from "@fortawesome/free-solid-svg-icons";
 const AddPage = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const navigate = useNavigate();
+    const [backendErrors, setBackendErrors] = useState<string[]>([]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,11 +41,12 @@ const AddPage = () => {
             if (!response.ok) {
                 const errorText = await response.text();
 
+
                 //  Duplicate book error handling
                 if (errorText.includes('unique_book_title_per_user') || errorText.includes('Duplicate entry')) {
-                    alert(' This book title already exists in your library! Please use a different title.');
+                    setBackendErrors([' This book title already exists in your library! Please use a different title.']);
                 } else {
-                    alert(`Error: ${errorText || 'Failed to add book'}`);
+                    setBackendErrors([`Error: ${errorText || 'Failed to add book'}`]);
                 }
                 return;
             }
@@ -143,6 +145,8 @@ const AddPage = () => {
                             id="title"
                             name="title"
                             type="text"
+                            pattern=".*\S+.*"
+                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter book title"
                             required
                         />
@@ -158,6 +162,8 @@ const AddPage = () => {
                             id='author'
                             type="text"
                             name="author"
+                            pattern=".*\S+.*"
+                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter author name"
                             required
                         />
@@ -173,6 +179,8 @@ const AddPage = () => {
                             id="publisher"
                             type="text"
                             name="publisher"
+                            pattern=".*\S+.*"
+                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter publisher"
                             required
 
@@ -272,6 +280,19 @@ const AddPage = () => {
                             placeholder="Add your notes about the book..."
                         ></textarea>
                     </div>
+
+                    {/* Backend Errors */}
+                    {backendErrors.length > 0 && (
+                        <div className="backend-errors bg-red-50 border border-red-300 rounded-lg p-4">
+                            <h4 className="text-red-800 font-bold mb-2">Σφάλμα:</h4>
+                            {backendErrors.map((error, index) => (
+                                <div key={index} className="error-item text-red-800 flex items-center mt-1">
+                                    <span className="mr-2">❌</span>
+                                    {error}
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Submit Button */}
                     <div className="pt-4">
