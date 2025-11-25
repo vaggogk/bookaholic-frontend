@@ -95,14 +95,14 @@ const LoginPage = () => {
                             Σύνδεση
                         </button>
 
-                        <p className="mt-5 text-center text-red-800">
-                            Forgot your password?{" "}
-                            <Link
-                                to="/forgot_password"
-                                className=" p-1 text-red-700 hover:text-amber-800 font-bold underline"
-                            >Click here
-                            </Link>
-                        </p>
+                        {/*<p className="mt-5 text-center text-red-800">*/}
+                        {/*    Forgot your password?{" "}*/}
+                        {/*    <Link*/}
+                        {/*        to="/forgot_password"*/}
+                        {/*        className=" p-1 text-red-700 hover:text-amber-800 font-bold underline"*/}
+                        {/*    >Click here*/}
+                        {/*    </Link>*/}
+                        {/*</p>*/}
 
                         <p className="mt-1 text-center text-amber-800">
                             Don't have an account?{" "}
