@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react';
 import '../styles/homePage.css'
 import {Link} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare, faRightLeft, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {
+    faBook,
+    faBuilding,
+    faEuroSign,
+    faPenToSquare,
+    faRightLeft,
+    faTrash,
+    faUser
+} from "@fortawesome/free-solid-svg-icons";
 
 interface Book {
     id: number;
@@ -14,6 +22,8 @@ interface Book {
     cost: number;
     readingStatus: string;
     reviewRating?: number;
+    started: Date;
+    finished: Date;
     notes?: string;
 }
 
@@ -155,6 +165,7 @@ const LibraryPage = () => {
             </div>
         );
     }
+
     return (
         <div className="min-h-screen flex flex-col">
             {/* Header */}
@@ -201,17 +212,18 @@ const LibraryPage = () => {
                                     placeholder="🔍 Search by title, author or publisher..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full px-4 py-3 border border-amber-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-lg"
+                                    className="w-full px-4 py-3 border border-amber-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 text-lg"
                                 />
                             </div>
                         </div>
 
                         {/* Books Grid  */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-4">
+
                             {books.length === 0 ? (
                                 <div className="col-span-full text-center py-8">
                                     <p className="text-amber-800 text-lg">
-                                        {searchTerm ? `No books found for "${searchTerm}"` : "No books in your library yet."}
+                                        {searchTerm ? `No books found for "${searchTerm}"` : "No books in your 'library' category yet."}
                                     </p>
                                 </div>
                             ) : (
@@ -223,6 +235,13 @@ const LibraryPage = () => {
                                                     'border-red-100'}
                                                     `}
                                     >
+                                        {/* Title */}
+                                        <div className="mb-3">
+                                            <h3 className="text-xl font-bold text-amber-800 text-center">
+                                                {book.title}
+                                            </h3>
+                                        </div>
+
                                         {book.coverImage && (
                                             <div className="mb-3 flex justify-center">
                                                 <img
@@ -233,25 +252,33 @@ const LibraryPage = () => {
                                             </div>
                                         )}
 
-                                        <h3 className="text-md md:text-lg font-bold text-amber-800 mb-2 line-clamp-2">{book.title}</h3>
 
                                         {/* Book Details */}
-                                        <div className="space-y-1 text-sm">
-                                            <p className="text-amber-700">
-                                                <span className="font-bold text-amber-900">Author:</span>
-                                                <span className="text-amber-600 ml-1">{book.author}</span>
+                                        <div className="space-y-1.5 text-sm">
+                                            <p className="text-amber-700 flex gap-1 ">
+                                                < span className="font-bold text-amber-900 flex gap-1 ">
+                                                    <FontAwesomeIcon icon={faUser}
+                                                    className="text-amber-700 text-sm " />Author:</span>
+                                                <span className="text-amber-600 ml-1 font-bold">{book.author}</span>
                                             </p>
                                             <p className="text-amber-700">
-                                                <span className="font-bold text-amber-900">Publisher:</span>
-                                                <span className="text-amber-600 ml-1">{book.publisher}</span>
+
+                                                <span className="font-bold text-amber-900">
+                                                    <FontAwesomeIcon icon={faBuilding}
+                                                    className="text-amber-700 text-sm"/> Publisher:</span>
+                                                <span className="text-amber-600 ml-1 font-bold">{book.publisher}</span>
                                             </p>
-                                            <p className="text-amber-700">
-                                                <span className="font-bold text-amber-900">Pages:</span>
-                                                <span className="text-amber-600 ml-1">{book.pages}</span>
+                                            <p className="text-amber-700 flex gap-1">
+                                                <span className="font-bold text-amber-900 flex gap-1">
+                                                    <FontAwesomeIcon icon={faBook}
+                                                     className="text-amber-700 text-sm " />Pages:</span>
+                                                <span className="text-amber-600 ml-1 font-bold ">{book.pages}</span>
                                             </p>
-                                            <p className="text-amber-700">
-                                                <span className="font-bold text-amber-900">Cost:</span>
-                                                <span className="text-amber-600 ml-1">{book.cost} €</span>
+                                            <p className="text-amber-700 flex gap-1">
+                                                <span className="font-bold text-amber-900 flex gap-1">
+                                                     <FontAwesomeIcon icon={faEuroSign}
+                                                                      className="text-amber-700 text-sm " />Cost:</span>
+                                                <span className="text-amber-600 ml-1 font-bold">{book.cost} €</span>
                                             </p>
                                             <p className="text-amber-700">
                                                 <span className="font-bold text-amber-900">Status:</span>
@@ -273,11 +300,74 @@ const LibraryPage = () => {
                                             </p>
                                         )}
 
+                                        {/* Started & Finished με γραμμές */}
+                                        {(book.started !== undefined && book.started !== null) ||
+                                        (book.finished !== undefined && book.finished !== null) ? (
+                                            <div className="mt-3 pt-3 border-t border-amber-200">
+                                                <div className="flex items-center justify-between">
+                                                    {/* Started */}
+                                                    {book.started !== undefined && book.started !== null && (
+                                                        <div className="text-center">
+                                                            <div className="text-xs font-bold text-amber-900">STARTED</div>
+                                                            <div className="text-sm font-semibold text-amber-700 mt-1">
+                                                                {new Date(book.started).toLocaleDateString('el-GR', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                    year: 'numeric'
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Γραμμή/Βέλος */}
+                                                    {(book.started && book.finished) && (
+                                                        <div className="mx-2">
+                                                            <div className="w-8 h-0.5 bg-amber-400"></div>
+                                                            <div className="text-center text-amber-500 text-xs mt-1">→</div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Finished */}
+                                                    {book.finished !== undefined && book.finished !== null && (
+                                                        <div className="text-center">
+                                                            <div className="text-xs font-bold text-amber-900">FINISHED</div>
+                                                            <div className="text-sm font-semibold text-green-700 mt-1">
+                                                                {new Date(book.finished).toLocaleDateString('el-GR', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                    year: 'numeric'
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ) : null}
+
+
+
                                         {book.notes && (
-                                            <div className="text-amber-700 mt-2 text-sm">
-                                                <span className="font-bold text-amber-900">Notes:</span>
-                                                <div className="max-h-20 overflow-y-auto">
-                                                    <span className="text-amber-600 ml-1 block">{book.notes}</span>
+                                            <div className="mt-4 pt-4 border-t border-amber-200">
+                                                <div className="bg-gradient-to-br from-orange-50 to-gray-100 rounded-xl p-4 border-2 border-gray-200 shadow-inner">
+                                                    <div className="flex items-center gap-3 mb-3">
+                                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-fgray-700 to-yellow-900 flex items-center justify-center shadow-sm">
+                                                            <span className="text-amber-800 text-sm">📝</span>
+                                                        </div>
+                                                        <span className="text-amber-900 font-bold text-sm tracking-wide">
+                                                            NOTES
+                                                      </span>
+                                                    </div>
+                                                    <div className="max-h-32 overflow-y-auto
+                                                       [&::-webkit-scrollbar]:w-2
+                                                     [&::-webkit-scrollbar-track]:bg-white
+                                                       [&::-webkit-scrollbar-track]:rounded-full
+                                                     [&::-webkit-scrollbar-thumb]:bg-amber-800
+                                                       [&::-webkit-scrollbar-thumb]:rounded-full
+                                                     [&::-webkit-scrollbar-thumb:hover]:bg-amber-900">
+                                                        <p className="text-amber-900 leading-relaxed text-sm pr-1">
+                                                            {book.notes}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}
