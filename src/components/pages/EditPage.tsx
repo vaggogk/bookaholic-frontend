@@ -5,7 +5,7 @@ import { faRightLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface Book {
     id: number;
-   coverImage?: string;
+    coverImage?: string;
     title: string;
     author: string;
     publisher: string;
@@ -13,7 +13,15 @@ interface Book {
     cost: number;
     readingStatus: string;
     reviewRating?: number;
+    started: Date;
+    finished: Date;
     notes?: string;
+}
+
+interface Toast {
+    show: boolean;
+    message: string;
+    type: 'success' | 'error';
 }
 
 const EditPage = () => {
@@ -22,7 +30,12 @@ const EditPage = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState(true);
-
+    const [backendErrors, setBackendErrors] = useState<string[]>([]);
+    const [toast, setToast] = useState<Toast>({
+        show: false,
+        message: '',
+        type: 'success'
+    });
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -45,7 +58,6 @@ const EditPage = () => {
                 setImagePreview(bookData.coverImage || null);
             } catch (error) {
                 console.error('Error fetching book:', error);
-
                 setBook(null);
             } finally {
                 setLoading(false);
@@ -58,17 +70,115 @@ const EditPage = () => {
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setBackendErrors([]);
 
         const formData = new FormData(e.currentTarget as HTMLFormElement);
+        const title = formData.get('title') as string;
+        const author = formData.get('author') as string;
+        const publisher = formData.get('publisher') as string;
+        const started = formData.get('started') as string;
+        const finished = formData.get('finished') as string;
+        const pages = formData.get('pages') as string;
+        const cost = formData.get('cost') as string;
+        const reviewRating = formData.get('reviewRating') as string;
+
+        const today = new Date().toISOString().split('T')[0];
+        const errors: string[] = [];
+
+        // Validation για title
+        if (!title || title.trim() === '') {
+            errors.push('🐞 Book title is required');
+        } else if (!/^(?!\s*$).+/.test(title)) {
+            errors.push('🐞 Book title cannot be empty or contain only spaces');
+        } else if (title.length > 100) {
+            errors.push('🐞 Book title cannot exceed 100 characters');
+        }
+
+        // Validation για author
+        if (!author || author.trim() === '') {
+            errors.push('🐞 Author is required');
+        } else if (!/^(?!\s*$).+/.test(author)) {
+            errors.push('🐞 Author cannot be empty or contain only spaces');
+        } else if (author.length > 100) {
+            errors.push('🐞 Author cannot exceed 100 characters');
+        }
+
+        // Validation για publisher
+        if (!publisher || publisher.trim() === '') {
+            errors.push('🐞 Publisher is required');
+        } else if (!/^(?!\s*$).+/.test(publisher)) {
+            errors.push('🐞 Publisher cannot be empty or contain only spaces');
+        } else if (publisher.length > 100) {
+            errors.push('🐞 Publisher cannot exceed 100 characters');
+        }
+
+        // Validation για pages
+        if (!pages || pages.trim() === '') {
+            errors.push('🐞 Pages is required');
+        } else {
+            const pagesNum = parseInt(pages);
+            if (isNaN(pagesNum) || pagesNum < 0) {
+                errors.push('🐞 Pages must be a positive number');
+            } else if (pagesNum > 10000) {
+                errors.push('🐞 Pages cannot exceed 10,000');
+            }
+        }
+
+        // Validation για cost
+        if (!cost || cost.trim() === '') {
+            errors.push('🐞 Cost is required');
+        } else {
+            const costNum = parseFloat(cost);
+            if (isNaN(costNum) || costNum < 0) {
+                errors.push('🐞 Cost must be a positive number');
+            }
+        }
+
+        // Validation για started date
+        if (started && started > today) {
+            errors.push('🐞 Start date cannot be in the future');
+        }
+
+        // Validation για finished date
+        if (finished && finished > today) {
+            errors.push('🐞 Finish date cannot be in the future');
+        }
+
+        // Validation started vs finished
+        if (started && finished) {
+            const startTimestamp = new Date(started).getTime();
+            const finishTimestamp = new Date(finished).getTime();
+
+            if (finishTimestamp < startTimestamp) {
+                errors.push('🐞 Finish date must be after start date');
+            }
+        }
+
+        // Validation για review rating
+        if (reviewRating && reviewRating.trim() !== '') {
+            const rating = parseFloat(reviewRating);
+            if (isNaN(rating) || rating < 0 || rating > 5) {
+                errors.push('🐞 Rating must be between 0 and 5');
+            }
+        }
+
+        // Αν υπάρχουν errors, σταμάτησε
+        if (errors.length > 0) {
+            setBackendErrors(errors);
+            return;
+        }
+
         const bookData = {
-           coverImage: imagePreview,
-            title: formData.get('title') as string,
-            author: formData.get('author') as string,
-            publisher: formData.get('publisher') as string,
-            pages: parseInt(formData.get('pages') as string),
-            cost: parseFloat(formData.get('cost') as string),
+            coverImage: imagePreview,
+            title: title,
+            author: author,
+            publisher: publisher,
+            pages: parseInt(pages),
+            cost: parseFloat(cost),
             readingStatus: formData.get('readingStatus') as string,
-            reviewRating: formData.get('reviewRating') ? parseFloat(formData.get('reviewRating') as string) : null,
+            reviewRating: reviewRating ? parseFloat(reviewRating) : null,
+            started: started || null,
+            finished: finished || null,
             notes: formData.get('notes') as string,
         };
 
@@ -86,24 +196,49 @@ const EditPage = () => {
             if (!response.ok) {
                 const errorText = await response.text();
 
-                //  Duplicate book error handling
+                // Duplicate book error handling
                 if (errorText.includes('unique_book_title_per_user') || errorText.includes('Duplicate entry')) {
-                    alert(' This book title already exists in your library! Please use a different title.');
+                    setToast({
+                        show: true,
+                        message: '📚 This book title already exists in your library! Please use a different title.',
+                        type: 'error'
+                    });
                 } else {
-                    alert(`Error: ${errorText || 'Failed to update book'}`);
+                    setToast({
+                        show: true,
+                        message: `Error: ${errorText || 'Failed to update book'}`,
+                        type: 'error'
+                    });
                 }
                 return;
             }
 
             console.log("Book Update successfully! Status:", response.status);
-            alert('✅ Book updated successfully!');
-            navigate("/home_page");
+
+            // Custom success toast
+            setToast({
+                show: true,
+                message: '👏 Book updated successfully! Redirecting...',
+                type: 'success'
+            });
+
+            // Redirect μετά από 2 δευτερόλεπτα
+            setTimeout(() => {
+                navigate("/home_page");
+            }, 2000);
 
         } catch (error) {
             console.error('Error updating book:', error);
-            alert('Error updating book. Please try again.');
+
+            // Custom error toast
+            setToast({
+                show: true,
+                message: '❌ Error updating book. Please try again.',
+                type: 'error'
+            });
         }
     };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -125,6 +260,31 @@ const EditPage = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
+            {/* Custom Toast Notification */}
+            {toast.show && (
+                <div className="fixed top-6 right-6 z-50 animate-fadeInUp">
+                    <div className={`${toast.type === 'success' ? 'bg-amber-500' : 'bg-amber-500'} text-white px-6 py-4 rounded-xl shadow-2xl flex items-center min-w-[300px] border-l-4 ${toast.type === 'success' ?  'border-pink-300' : 'border-pink-300'}`}>
+                        <div className={`w-10 h-10 rounded-full ${toast.type === 'success' ? 'bg-amber-500' : 'bg-amber-500'} flex items-center justify-center mr-4`}>
+                            <span className="text-xl">
+                                {toast.type === 'success' ? '✓' : '✗'}
+                            </span>
+                        </div>
+                        <div className="flex-1">
+                            <p className="font-bold text-lg">
+                                {toast.type === 'success' ? 'Success!' : 'Error!'}
+                            </p>
+                            <p className="text-white/90">{toast.message}</p>
+                        </div>
+                        <button
+                            onClick={() => setToast({...toast, show: false})}
+                            className="ml-4 text-white/70 hover:text-white text-xl"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Return option */}
             <div className="absolute left-4 top-1/4 -translate-y-1/2">
                 <Link to="/home_page">
@@ -154,6 +314,7 @@ const EditPage = () => {
                 <form
                     className="max-w-md mx-auto bg-white p-8 border-2 border-amber-800 rounded-xl shadow-lg space-y-6"
                     onSubmit={handleSubmit}
+                    noValidate
                 >
                     <div className="text-center mb-6">
                         <h1 className="text-3xl font-bold text-amber-800 drop-shadow-sm">Edit Your Book</h1>
@@ -203,11 +364,8 @@ const EditPage = () => {
                             id="title"
                             name="title"
                             type="text"
-                            pattern=".*\S+.*"
-                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter book title"
                             defaultValue={book.title}
-                            required
                         />
                     </div>
 
@@ -221,11 +379,8 @@ const EditPage = () => {
                             id='author'
                             name="author"
                             type="text"
-                            pattern=".*\S+.*"
-                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter author name"
                             defaultValue={book.author}
-                            required
                         />
                     </div>
 
@@ -239,11 +394,8 @@ const EditPage = () => {
                             id="publisher"
                             name="publisher"
                             type="text"
-                            pattern=".*\S+.*"
-                            title="This field cannot be empty or contain only spaces"
                             placeholder="Enter publisher"
                             defaultValue={book.publisher}
-                            required
                         />
                     </div>
 
@@ -259,9 +411,9 @@ const EditPage = () => {
                                 name="pages"
                                 type="number"
                                 min="0"
+                                max="10000"
                                 placeholder="0"
                                 defaultValue={book.pages}
-                                required
                             />
                         </div>
 
@@ -276,10 +428,9 @@ const EditPage = () => {
                                 name="cost"
                                 type="number"
                                 min="0"
-                                step="any"
+                                step="0.01"
                                 placeholder="0.00"
                                 defaultValue={book.cost}
-                                required
                             />
                         </div>
                     </div>
@@ -327,6 +478,34 @@ const EditPage = () => {
                                 defaultValue={book.reviewRating || ''}
                             />
                         </div>
+
+                        {/* Started */}
+                        <div className="space-y-2">
+                            <label htmlFor="started" className="block font-bold text-lg text-amber-800">
+                                Started
+                            </label>
+                            <input
+                                className="w-full p-3 border-2 border-amber-700 rounded-lg focus:border-amber-800 focus:ring-2 focus:ring-amber-700 transition-colors text-amber-900 placeholder-amber-700"
+                                id="started"
+                                type="date"
+                                name="started"
+                                defaultValue={book.started ? new Date(book.started).toISOString().split('T')[0] : ''}
+                            />
+                        </div>
+
+                        {/* Finished */}
+                        <div className="space-y-2">
+                            <label htmlFor="finished" className="block font-bold text-lg text-amber-800">
+                                Finished
+                            </label>
+                            <input
+                                className="w-full p-3 border-2 border-amber-700 rounded-lg focus:border-amber-800 focus:ring-2 focus:ring-amber-700 transition-colors text-amber-900 placeholder-amber-700"
+                                id="finished"
+                                type="date"
+                                name="finished"
+                                defaultValue={book.finished ? new Date(book.finished).toISOString().split('T')[0] : ''}
+                            />
+                        </div>
                     </div>
 
                     {/* Notes */}
@@ -343,6 +522,26 @@ const EditPage = () => {
                             defaultValue={book.notes || ''}
                         ></textarea>
                     </div>
+
+                    {/* Error Display */}
+                    {backendErrors.length > 0 && (
+                        <div className="mb-6 border-2 border-red-800 bg-red-50 rounded-xl p-4 shadow-md">
+                            <div className="flex items-center border-b border-red-700 pb-2 mb-3">
+                                <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mr-2">
+                                    <span className="text-red-700 text-xs font-bold">🐞</span>
+                                </div>
+                                <h4 className="text-red-700 font-bold">Please fix these issues:</h4>
+                            </div>
+                            <ul className="space-y-2">
+                                {backendErrors.map((error, index) => (
+                                    <li key={index} className="flex items-start">
+                                        <span className="text-red-700 mr-2">➜</span>
+                                        <span className="text-red-700 font-bold">{error}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     {/* Submit Button */}
                     <div className="pt-4">
